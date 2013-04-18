@@ -6,3 +6,5 @@ class Process:
 		self.execution_time = execution_time
 		self.process_type = process_type
 		self.priority = priority
+		
+		
