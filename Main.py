@@ -6,9 +6,10 @@ if __name__ == '__main__':
     while option!=0:
         option = int(raw_input(" 1) Hacer llamada\n 2) Enviar mensaje\n 3) Revisar contactos\n 4) Revisar historial de llamadas\n 5) Ver mensajes\n 6) Ejecutar proceso\n 7) Ver Procesos\n 0) Salir\n"))
         if option == 1:
-            # hacer llamada. Pedir el numero y decidir que hacer para registrar el tmpo de duracion de la llamada
+            # hacer llamada. Pedir el numero y dar la opcion de cortar
             pass
         elif option == 2:
+            #pedir numero y texto para enviar un mensaje por consola, ojo con las interrupciones
             pass
         elif option == 3:
             # Revisar contactos. Se debe poder realizar una llamada a partir de los contactos (nombre de la persona)
