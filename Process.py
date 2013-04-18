@@ -1,4 +1,4 @@
-
+# clase
 class Process:
 	def __init__(self,pid,name,execution_time,process_type,priority):
 		self.pid = pid
