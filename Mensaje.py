@@ -8,7 +8,7 @@ class Mensaje(Process):
 		time.sleep(len(otros[1]))
 		print "Mensaje enviado"
 
-	def recibir_llamada():
+	def recibir_mensaje():
 		print "Mensaje entrante de "+otros[0]+"..."
 		time.sleep(len(otros[1]))
 		print "Mensaje recibido"
