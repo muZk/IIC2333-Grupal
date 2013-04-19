@@ -6,9 +6,9 @@ class Llamada(Process):
 
 		print "Llamando a "+otros[0]+"..."
 		time.sleep(otros[1]))
-    	print "Llamada finalizada"
+         	print "Llamada finalizada"
 
     def recibir_llamada():
-    	print "Llamada entrante de "+otros[0]+"..."
+    	        print "Llamada entrante de "+otros[0]+"..."
 		time.sleep(otros[1]))
-    	print "Llamada finalizada"
+         	print "Llamada finalizada"
