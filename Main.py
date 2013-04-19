@@ -1,8 +1,15 @@
 import multiprocessing
+import Scheduler
 
 if __name__ == '__main__':
+   
+    so = Scheduler.Scheduler()
+    #prueba
+    so.loadProcesses()
+    so.priorityScheduler()
+    
     print "Elija una de las siguientes opciones:\n"
-    option = 1
+    option = 0 #cambiar a 1 cuando ya este implementada la consola
     while option!=0:
         option = int(raw_input(" 1) Hacer llamada\n 2) Enviar mensaje\n 3) Revisar contactos\n 4) Revisar historial de llamadas\n 5) Ver mensajes\n 6) Ejecutar proceso\n 7) Ver Procesos\n 0) Salir\n"))
         if option == 1:
