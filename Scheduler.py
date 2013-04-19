@@ -22,4 +22,4 @@ class Scheduler:
 				else:
 					# se mantiene el proceso anterior en running, meter a ready lo que sacamos
 					pass
-			
+		return self.running
