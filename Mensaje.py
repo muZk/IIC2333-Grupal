@@ -5,10 +5,10 @@ class Mensaje(Process):
 	def enviar_mensaje():
 
 		print "Enviando a "+otros[0]+"..."
-		time.sleep(len(otros[1]))
+		time.sleep(len(otros[1])*20/1000)
 		print "Mensaje enviado"
 
 	def recibir_mensaje():
 		print "Mensaje entrante de "+otros[0]+"..."
-		time.sleep(len(otros[1]))
+		time.sleep(len(otros[1])*20/1000)
 		print "Mensaje recibido"
