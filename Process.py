@@ -33,7 +33,7 @@ class Process:
 	def getOtros(self):
 		return self.otros
 	
-	def getProccesType(self):
+	def getProcessType(self):
 		return self.process_type
 		
 	def getExecutionDate(self):
