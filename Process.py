@@ -1,4 +1,5 @@
 import math
+import time
 
 class Process:
 	def __init__(self,pid,name,execution_date,process_type,priority,otros):
@@ -38,3 +39,56 @@ class Process:
 		
 	def getExecutionDate(self):
 		return self.execution_date
+
+	def realizar_llamada(self):
+
+		print "Llamando a "+otros[0]+"..."
+		time.sleep(otros[1]))
+		print "Llamada finalizada"
+
+	def recibir_llamada(self):
+
+		print "Llamada entrante de "+otros[0]+"..."
+		time.sleep(otros[1]))
+		print "Llamada finalizada"
+	def enviar_mensaje(self):
+
+		print "Enviando a "+otros[0]+"..."
+		time.sleep(len(otros[1])*20/1000)
+		print "Mensaje enviado"
+
+	def recibir_mensaje(self):
+		print "Mensaje entrante de "+otros[0]+"..."
+		time.sleep(len(otros[1])*20/1000)
+		print "Mensaje recibido"
+
+	def enviar_ubicacion(self):
+
+		print "Enviando ubicación..."
+		time.sleep(otros[0]))
+		print "Ubicación enviada"
+
+	def ver_ubicacion(self):
+
+		print "Viendo ubicación..."
+		time.sleep(2)
+		print "Ubicación vista"
+
+	def jugar(self):
+
+		print "Jugando..."
+		time.sleep(otros[0]))
+		print "Realizado"
+
+	def escuchar_musica(self):
+
+		print "Escuchando..."
+		time.sleep(otros[0]))
+		print "Realizado"
+	
+	def cualquiera(self):
+
+		print "Ejecutando "+name+"..."
+		time.sleep(otros[0]))
+		print "Realizado"
+		
