@@ -12,3 +12,5 @@ class Mensaje(Process):
 		print "Mensaje entrante de "+otros[0]+"..."
 		time.sleep(len(otros[1])*20/1000)
 		print "Mensaje recibido"
+
+
