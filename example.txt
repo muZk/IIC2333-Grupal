@@ -1,3 +1,2 @@
-recibir_llamada;3;2;0;2277567;10
-angry_birds;5;9;8;60
-dota2;6;9;8;60
+enviar_mensajes;3;3;2;2277567;Como va?
+recibir_mensajes;4;4;2;2277567;Bien y tu?

@@ -97,4 +97,4 @@ class Process:
 		pass
 
 	def toString(self):
-		return '[name='+self.name+',pid='+str(self.pid)+',p='+str(self.priority)+']';
+		return '(name={},pid={},priority={},type={})'.format(self.name,str(self.pid),str(self.priority),str(self.process_type))

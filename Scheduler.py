@@ -13,10 +13,13 @@ class Scheduler:
 		self.IdCounter = 0
 		self.incomingProcesses = list()
 		self.time=0 #variable que registra el tiempo
+		
+	def getCurrentTime(self):
+		return self.time
 
 	def addProcess(self, process):
 		self.ready.put((process.priority,process.pid))
-		print 'addProcess - TiempoActal = '+str(self.time)+' Agendando pid = '+str(process.pid)+' nombre:  '+process.name
+		print 'Agregando ... {}'.format(process.toString())
 		# Agregamos el proceso en memoria:
 		Memory.saveProcess(process)
 		
@@ -25,6 +28,17 @@ class Scheduler:
 		Memory.removeProcess(process.pid)
 		if self.running == process:
 			self.running = None
+			
+	def loadProcessFromString(self,line):
+		atr = line.split(';')
+		otros = list()
+		for i in range(4, len(atr)):
+			otros.append(atr[i])
+		print otros
+		p = Process.Process(self.IdCounter,atr[0],atr[1],atr[2],atr[3],otros)
+		self.incomingProcesses.append(p)
+		self.IdCounter=self.IdCounter+1
+		self.incomingProcesses.sort(key = lambda Process: -Process.execution_date) #ordeno por orden de llegada
 		
 	def loadProcesses(self):
 		f = open("example.txt")
@@ -95,7 +109,7 @@ class Scheduler:
 			f.write(line)
 	
 	def exchange(self,process):
-		print 'Expropiación de '+self.running.toString()+' por '+process.toString();
+		print 'Expropiaciï¿½n de '+self.running.toString()+' por '+process.toString();
 		self.running.setTimeLeft(self.runningTime)
 		self.runningTime=0
 		paux = self.running
