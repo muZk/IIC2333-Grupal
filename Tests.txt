@@ -1,0 +1,13 @@
+Test1: expropiación
+recibir_llamada;10;2;0;2277567;15
+angry_birds;5;9;8;60
+
+Test2: los juegos llegan al mismo tiempo, se ejecuta el primero que sale en la configuración (angry_birds)
+recibir_llamada;3;2;0;2277567;10
+angry_birds;5;9;8;60
+dota2;5;9;8;60
+
+Test3: llega primero angry_birds que dota2, finaliza la llamada y se ejecuta angry_birds
+recibir_llamada;3;2;0;2277567;10
+angry_birds;5;9;8;60
+dota2;6;9;8;60

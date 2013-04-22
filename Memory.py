@@ -27,6 +27,7 @@ class Memory:
     
     @staticmethod
     def removeProcess(pid):
+        print "Removing from memory pid = %i " % pid
         try:
             os.remove(Memory.fileName(pid))
             return True

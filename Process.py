@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import math
 import time
 
@@ -41,54 +43,58 @@ class Process:
 		return self.execution_date
 
 	def realizar_llamada(self):
-
-		print "Llamando a "+otros[0]+"..."
-		time.sleep(otros[1]))
-		print "Llamada finalizada"
+		#print "Llamando a "+otros[0]+"..."
+		#time.sleep(otros[1]))
+		#print "Llamada finalizada"
+		pass
 
 	def recibir_llamada(self):
-
-		print "Llamada entrante de "+otros[0]+"..."
-		time.sleep(otros[1]))
-		print "Llamada finalizada"
+		#print "Llamada entrante de "+otros[0]+"..."
+		#time.sleep(otros[1]))
+		#print "Llamada finalizada"
+		pass
+		
 	def enviar_mensaje(self):
-
-		print "Enviando a "+otros[0]+"..."
-		time.sleep(len(otros[1])*20/1000)
-		print "Mensaje enviado"
+		#print "Enviando a "+otros[0]+"..."
+		#time.sleep(len(otros[1])*20/1000)
+		#print "Mensaje enviado"
+		pass
 
 	def recibir_mensaje(self):
-		print "Mensaje entrante de "+otros[0]+"..."
-		time.sleep(len(otros[1])*20/1000)
-		print "Mensaje recibido"
+		#print "Mensaje entrante de "+otros[0]+"..."
+		#time.sleep(len(otros[1])*20/1000)
+		#print "Mensaje recibido"
+		pass
 
 	def enviar_ubicacion(self):
-
-		print "Enviando ubicación..."
-		time.sleep(otros[0]))
-		print "Ubicación enviada"
+		#print "Enviando ubicación..."
+		#time.sleep(otros[0]))
+		#print "Ubicación enviada"
+		pass
 
 	def ver_ubicacion(self):
-
-		print "Viendo ubicación..."
-		time.sleep(2)
-		print "Ubicación vista"
+		#print "Viendo ubicación..."
+		#time.sleep(2)
+		#print "Ubicación vista"
+		pass
 
 	def jugar(self):
-
-		print "Jugando..."
-		time.sleep(otros[0]))
-		print "Realizado"
+		#print "Jugando..."
+		#time.sleep(otros[0]))
+		#print "Realizado"
+		pass
 
 	def escuchar_musica(self):
-
-		print "Escuchando..."
-		time.sleep(otros[0]))
-		print "Realizado"
-	
-	def cualquiera(self):
-
-		print "Ejecutando "+name+"..."
-		time.sleep(otros[0]))
-		print "Realizado"
+		#print "Escuchando..."
+		#time.sleep(otros[0]))
+		#print "Realizado"
+		pass
 		
+	def cualquiera(self):
+		#print "Ejecutando "+name+"..."
+		#time.sleep(otros[0]))
+		#print "Realizado"
+		pass
+
+	def toString(self):
+		return '[name='+self.name+',pid='+str(self.pid)+',p='+str(self.priority)+']';

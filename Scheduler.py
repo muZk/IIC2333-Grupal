@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import Queue
 import Process
 import datetime
@@ -94,6 +95,7 @@ class Scheduler:
 			f.write(line)
 	
 	def exchange(self,process):
+		print 'Expropiación de '+self.running.toString()+' por '+process.toString();
 		self.running.setTimeLeft(self.runningTime)
 		self.runningTime=0
 		paux = self.running
