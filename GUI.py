@@ -50,7 +50,9 @@ class GUI:
             elif command == "14":
                 self.proceso_cualquiera()
             elif command == "0":
-                pass
+                self.so.ejecutandose=False
+                run=False
+                print "Chao!"
             else:
                 # cortar proceso, ifs para que no se caiga cuando ingresan cualquier cosa
                 if len(command)>5: 
@@ -117,7 +119,7 @@ class GUI:
                     if numLinea2==int(numero):
                         contacto = linea2.split(';')
                         print 'Llamando a: '+contacto[0]
-                        process_string = '{};{};{};{};{};{}'.format('hacer_llamada',str(self.so.getCurrentTime()),'1','0',contacto[1],10)
+                        process_string = '{};{};{};{};{};{}'.format('hacer_llamada',str(self.so.getCurrentTime()),'1','0',contacto[1],36000)
                         print process_string
                         self.so.loadProcessFromString(process_string)
                         break

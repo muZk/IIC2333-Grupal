@@ -13,7 +13,7 @@ class Scheduler:
 		self.IdCounter = 0
 		self.incomingProcesses = list()
 		self.time=0 #variable que registra el tiempo
-		
+		self.ejecutandose=True
 	def getCurrentTime(self):
 		return self.time
 
@@ -65,7 +65,7 @@ class Scheduler:
 		return Memory.readProcess(pid)
 
 	def priorityScheduler(self):
-		while True:
+		while self.ejecutandose:
 			#Revisar si llega alguien en el tiempo time y meterlo a la cola de prioridades
 			self.checkIncomingProc(self.time)
 			#Si se acabo el proceso actual hacer cambios
