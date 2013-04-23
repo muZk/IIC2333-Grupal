@@ -23,9 +23,6 @@ class GUI:
             command = raw_input() # pedimos el input al usuario  
             if command == "1":
                 self.llamar()
-                cortar = raw_input ("Para Cortar presione q")
-                if cortar == "q": 
-                    self.cortar()
             elif command == "2":
                 self.enviar_mensaje()
             elif command == "3":
@@ -42,7 +39,7 @@ class GUI:
                 self.ver_mensajes()
             elif command == "9":
                 self.agregar_contacto()
-             elif command == "10":
+            elif command == "10":
                 self.ver_ubicacion()
             elif command == "11":
                 self.mandar_ubicacion()
@@ -50,11 +47,19 @@ class GUI:
                 self.jugar()
             elif command == "13":
                 self.escuchar_musica()
-            elif command=="14" 
+            elif command == "14":
                 self.proceso_cualquiera()
-                
             elif command == "0":
-                pass
+                self.so.ejecutandose=False
+                run=False
+                print "Chao!"
+            else:
+                # cortar proceso, ifs para que no se caiga cuando ingresan cualquier cosa
+                if len(command)>5: 
+                    if command[:5] == 'quit:':
+                        id = command.split(':')[1]
+                        self.so.endProcessByConsole(int(id))
+                        
         
     def getNumero(self): # con este metodo se obtiene el valor del input para el telefono
         input_numero = raw_input('Ingrese el numero telefonico al cual desea llamar: ')
@@ -84,16 +89,12 @@ class GUI:
         print process_string
         self.so.loadProcessFromString(process_string)
 
-    def cortar(self):
-        print 'Cortando llamada'
-        self.so.endProcess()
-
     def enviar_mensaje(self):
         process_string = '{};{};{};{};{};{}'.format('enviar_mensaje',str(self.so.getCurrentTime()),'3','2',self.getNumeroMensaje(),self.getMensaje())
         print process_string
         self.so.loadProcessFromString(process_string)
         
-   def ver_contactos(self):
+    def ver_contactos(self):
         print 'Viendo contactos'
         print 'Contactos'
         f=open("Contactos.txt", "r")
@@ -118,7 +119,7 @@ class GUI:
                     if numLinea2==int(numero):
                         contacto = linea2.split(';')
                         print 'Llamando a: '+contacto[0]
-                        process_string = '{};{};{};{};{};{}'.format('hacer_llamada',str(self.so.getCurrentTime()),'1','0',contacto[1],10)
+                        process_string = '{};{};{};{};{};{}'.format('hacer_llamada',str(self.so.getCurrentTime()),'1','0',contacto[1],36000)
                         print process_string
                         self.so.loadProcessFromString(process_string)
                         break
@@ -132,21 +133,30 @@ class GUI:
         self.so.loadProcessFromString(process_string)
         
     def historial_llamadas(self):
-        print 'Historial llamadas'
+        print 'Historial llamadas\n'
         f=open("Historial.txt", "r")
         while True:
             linea = f.readline()
             if not linea: break
-            print linea
+            llamada = linea.split(';')
+            tipo = " Realizada"
+            if llamada[0] == "<": tipo=" Recibida"
+            if len(llamada)>1:
+                print "Llamada"+tipo+"\t Numero: "+llamada[1]+"\t Fecha: "+llamada[2]+"\t Duracion: "+llamada[3]+"\n"
 
     def ver_mensajes(self):
-        print 'Ver mensajes'
+        print 'Ver mensajes\n'
         print 'Historial mensajes'
         f=open("Mensajes.txt", "r")
         while True:
             linea = f.readline()
             if not linea: break
-            print linea
+            mensaje = linea.split(';')
+            tipo = " Enviado"
+            if mensaje[0] == "<": tipo=" Recibido"
+            if len(mensaje)>1:
+                print "Mensaje"+tipo+"\t Numero: "+mensaje[1]+"\t Fecha: "+mensaje[2]+"\t Texto: "+mensaje[3]+"\n"
+
         
     def ver_procesos(self):
         print 'Ver Procesos'
@@ -156,16 +166,37 @@ class GUI:
         print 'Ejecutar proceso'
         process_string = raw_input("Ingrese el comando: ")
         print process_string
-        self.so.loadProcessFromString(process_string)
+        self.so.loadProcessFromString(process_string,False)
 
     def ver_ubicacion(self):
-        pass
+        print 'Viendo ubicacion: '
+        process_string = '{};{};{};{};{}'.format('ver_ubicacion',str(self.so.getCurrentTime()),'8','8',36000)
+        print process_string
+        self.so.loadProcessFromString(process_string)
         
     def mandar_ubicacion(self):
-        pass
+        #demora 2
+        print 'Mandando ubicacion: '
+        process_string = '{};{};{};{};{}'.format('mandar_ubicacion',str(self.so.getCurrentTime()),'7','8',2)
+        print process_string
+        self.so.loadProcessFromString(process_string)
+        
     def jugar(self):
-        pass
+        nombre = raw_input("¿Que desea jugar?")
+        print 'Jugando: '
+        process_string = '{};{};{};{};{}'.format(nombre,str(self.so.getCurrentTime()),'9','8',36000)
+        print process_string
+        self.so.loadProcessFromString(process_string)
+        
     def escuchar_musica(self):
-        pass
-    def proceso_cualquiera(self);
-        pass
+        print 'musica: '
+        process_string = '{};{};{};{};{}'.format('escuchar_musica',str(self.so.getCurrentTime()),'10','8',36000)
+        print process_string
+        self.so.loadProcessFromString(process_string)
+        
+    def proceso_cualquiera(self):
+        nombre = raw_input("¿Que desea ejecutar?")
+        print 'procesando cualquera: '
+        process_string = '{};{};{};{};{}'.format(nombre,str(self.so.getCurrentTime()),'6','8',36000)
+        print process_string
+        self.so.loadProcessFromString(process_string)
