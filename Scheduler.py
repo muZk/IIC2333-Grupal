@@ -156,7 +156,7 @@ class Scheduler:
 		print "Running: "+self.running.name
 	    print "Ready:\n"
 		for p in self.ready:
-			print readProcessFromMemory(p.id).name+" - "+readProcessFromMemory(p.id).name+"\n"
+			print readProcessFromMemory(p.pid).pid+" - "+readProcessFromMemory(p.pid).name+"\n"
 
 
 
