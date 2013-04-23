@@ -15,7 +15,7 @@ class GUI:
         self.mainloop()
         
     def opciones(self):
-        return "(1) Llamar\n(2) Mandar mensaje\n(3) Ver contactos\n(4) Revisar historial\n(5) Ver procesos\n(6) Cargar archivo\n(7) Ejecutar proceso\n(8) Ver mensajes\n(9) Agregar contacto\n(10) Ver ubicación\n(11) Mandar ubicación\n(12) Jugar\n(13) Escuchar música\n(14) Proceso cualquiera\n(0) Salir\n"
+        return "(1) Llamar\n(2) Mandar mensaje\n(3) Ver contactos\n(4) Revisar historial\n(5) Ver procesos\n(6) Ejecutar proceso\n(7) Ver mensajes\n(8) Agregar contacto\n(9) Ver ubicación\n(10) Mandar ubicación\n(11) Jugar\n(12) Escuchar música\n(13) Proceso cualquiera\n(0) Salir\n"
 
     def mainloop(self):
         run = True
@@ -32,22 +32,20 @@ class GUI:
             elif command == "5":
                 self.ver_procesos()
             elif command == "6":
-                pass
-            elif command == "7":
                 self.ejecutar_proceso()
-            elif command == "8":
+            elif command == "7":
                 self.ver_mensajes()
-            elif command == "9":
+            elif command == "8":
                 self.agregar_contacto()
-            elif command == "10":
+            elif command == "9":
                 self.ver_ubicacion()
-            elif command == "11":
+            elif command == "10":
                 self.mandar_ubicacion()
-            elif command == "12":
+            elif command == "11":
                 self.jugar()
-            elif command == "13":
+            elif command == "12":
                 self.escuchar_musica()
-            elif command == "14":
+            elif command == "13":
                 self.proceso_cualquiera()
             elif command == "0":
                 self.so.ejecutandose=False
