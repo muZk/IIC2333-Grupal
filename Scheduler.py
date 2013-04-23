@@ -109,7 +109,7 @@ class Scheduler:
 				tipo = ">;"
 			else:
 				tipo = "<;"
-			line = str(tipo)+";"+str(self.running.getOtros()[0]) + ";" + str(date) + ";" + str(self.running.getOtros()[1]) + "\n"
+			line = str(tipo)+str(self.running.getOtros()[0]) + ";" + str(date) + ";" + str(self.running.getOtros()[1]) + "\n"
 			f.write(line)
 	
 	def exchange(self,process):
