@@ -23,6 +23,9 @@ class GUI:
             command = raw_input() # pedimos el input al usuario  
             if command == "1":
                 self.llamar()
+                cortar = raw_input ("Para Cortar presione q")
+                if cortar == "q": 
+                    self.cortar()
             elif command == "2":
                 self.enviar_mensaje()
             elif command == "3":
@@ -64,8 +67,9 @@ class GUI:
         return input_mensaje
         
     def llamar(self):
-        print 'Llamando a {}'.format(self.getNumero())
-        process_string = '{};{};{};{};{}'.format('hacer_llamada',str(self.so.getCurrentTime()),'1','0',self.getNumero(),36000)
+        number = self.getNumero()
+        print 'Llamando a: '+number
+        process_string = '{};{};{};{};{};{}'.format('hacer_llamada',str(self.so.getCurrentTime()),'1','0',number,36000)
         print process_string
         self.so.loadProcessFromString(process_string)
 

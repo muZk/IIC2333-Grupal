@@ -36,9 +36,10 @@ class Scheduler:
 			otros.append(atr[i])
 		print otros
 		p = Process.Process(self.IdCounter,atr[0],atr[1],atr[2],atr[3],otros)
-		self.incomingProcesses.append(p)
+		self.addProcess(p)
+		#self.incomingProcesses.append(p)
 		self.IdCounter=self.IdCounter+1
-		self.incomingProcesses.sort(key = lambda Process: -Process.execution_date) #ordeno por orden de llegada
+		#self.incomingProcesses.sort(key = lambda Process: -Process.execution_date) #ordeno por orden de llegada
 		
 	def loadProcesses(self):
 		f = open("example.txt")
@@ -153,11 +154,16 @@ class Scheduler:
 			else:
 				break
 	def showActiveProcess(self):
-		print "Running: "+ self.running.pid +" - "+self.running.name
-	    print "Ready:\n"
-		for p in self.ready:
-			print self.readProcessFromMemory(p.pid).pid+" - "+ self.readProcessFromMemory(p.pid).name+"\n"
-
+		if self.running is not None:
+			print "Running: "+ str(self.running.pid) +" - "+str(self.running.name)
+			print "Ready:\n"
+			if not self.ready.empty():
+				for p in self.ready:
+					print str(self.readProcessFromMemory(p.pid).pid)+" - "+ str(self.readProcessFromMemory(p.pid).name)+"\n"
+			else:
+				print "No hay procesos en Ready"
+		else:
+		    print "No hay procesos en ejecucion"
 
 
 	def clock(self):
