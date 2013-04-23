@@ -15,3 +15,6 @@
 (0) Salir
 
 - Se cargan archivos editando example.txt
+- example.txt es una de las pertecencias, debe existir.
+- Se asume que los comandos de example.txt están bien escritos
+- Puede ir vacío si no se quiere cargar comandos

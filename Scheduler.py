@@ -48,15 +48,16 @@ class Scheduler:
 	def loadProcesses(self):
 		f = open("example.txt")
 		lines = f.readlines()
-		for line in lines:
-			atr = line.split(';')
-			otros = list()
-			for i in range(4, len(atr)):
-				otros.append(atr[i])
-			p = Process.Process(self.IdCounter,atr[0],atr[1],atr[2],atr[3],otros,False)
-			self.incomingProcesses.append(p)
-			self.IdCounter=self.IdCounter+1
-		self.incomingProcesses.sort(key = lambda Process: -Process.execution_date) #ordeno por orden de llegada
+		if len(lines)>0:
+			for line in lines:
+				atr = line.split(';')
+				otros = list()
+				for i in range(4, len(atr)):
+					otros.append(atr[i])
+				p = Process.Process(self.IdCounter,atr[0],atr[1],atr[2],atr[3],otros,False)
+				self.incomingProcesses.append(p)
+				self.IdCounter=self.IdCounter+1
+			self.incomingProcesses.sort(key = lambda Process: -Process.execution_date) #ordeno por orden de llegada
 		
 	def loadProcessFromMemory(self,pid):
 		return Memory.loadProcess(pid)
