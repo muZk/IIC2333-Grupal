@@ -84,19 +84,19 @@ class GUI:
         
     def llamar(self):
         number = self.getNumero()
-        print 'Llamando a: '+number
+        #print 'Llamando a: '+number
         process_string = '{};{};{};{};{};{}'.format('hacer_llamada',str(self.so.getCurrentTime()),'1','0',number,36000)
-        print process_string
+        #print process_string
         self.so.loadProcessFromString(process_string)
 
     def enviar_mensaje(self):
         process_string = '{};{};{};{};{};{}'.format('enviar_mensaje',str(self.so.getCurrentTime()),'3','2',self.getNumeroMensaje(),self.getMensaje())
-        print process_string
+        #print process_string
         self.so.loadProcessFromString(process_string)
         
     def ver_contactos(self):
-        print 'Viendo contactos'
-        print 'Contactos'
+        #print 'Viendo contactos'
+        #print 'Contactos'
         f=open("Contactos.txt", "r")
         numLinea = 0
         while True:
@@ -118,18 +118,18 @@ class GUI:
                     numLinea2=numLinea2+1
                     if numLinea2==int(numero):
                         contacto = linea2.split(';')
-                        print 'Llamando a: '+contacto[0]
+                        #print 'Llamando a: '+contacto[0]
                         process_string = '{};{};{};{};{};{}'.format('hacer_llamada',str(self.so.getCurrentTime()),'1','0',contacto[1],36000)
-                        print process_string
+                        #print process_string
                         self.so.loadProcessFromString(process_string)
                         break
             except:
                 print "Error al ingresar datos, vuelva a intentar"
 
     def agregar_contacto(self):
-        print 'Agregando contacto'
+        #print 'Agregando contacto'
         process_string = '{};{};{};{};{};{}'.format('nuevo_contacto',str(self.so.getCurrentTime()),'5','6', self.getNombreContacto(), self.getNumeroContacto())
-        print process_string
+        #print process_string
         self.so.loadProcessFromString(process_string)
         
     def historial_llamadas(self):
@@ -159,43 +159,43 @@ class GUI:
 
         
     def ver_procesos(self):
-        print 'Ver Procesos'
+        #print 'Ver Procesos'
         self.so.showActiveProcess()
         
     def ejecutar_proceso(self):
-        print 'Ejecutar proceso'
+        #print 'Ejecutar proceso'
         process_string = raw_input("Ingrese el comando: ")
-        print process_string
+        #print process_string
         self.so.loadProcessFromString(process_string,False)
 
     def ver_ubicacion(self):
-        print 'Viendo ubicacion: '
+        #print 'Viendo ubicacion: '
         process_string = '{};{};{};{};{}'.format('ver_ubicacion',str(self.so.getCurrentTime()),'8','8',36000)
-        print process_string
+        #print process_string
         self.so.loadProcessFromString(process_string)
         
     def mandar_ubicacion(self):
         #demora 2
-        print 'Mandando ubicacion: '
+        #print 'Mandando ubicacion: '
         process_string = '{};{};{};{};{}'.format('mandar_ubicacion',str(self.so.getCurrentTime()),'7','8',2)
-        print process_string
+        #print process_string
         self.so.loadProcessFromString(process_string)
         
     def jugar(self):
         nombre = raw_input("¿Que desea jugar?")
-        print 'Jugando: '
+        #print 'Jugando: '
         process_string = '{};{};{};{};{}'.format(nombre,str(self.so.getCurrentTime()),'9','8',36000)
-        print process_string
+        #print process_string
         self.so.loadProcessFromString(process_string)
         
     def escuchar_musica(self):
-        print 'musica: '
+        #print 'musica: '
         process_string = '{};{};{};{};{}'.format('escuchar_musica',str(self.so.getCurrentTime()),'10','8',36000)
-        print process_string
+        #print process_string
         self.so.loadProcessFromString(process_string)
         
     def proceso_cualquiera(self):
         nombre = raw_input("¿Que desea ejecutar?")
-        print 'procesando cualquera: '
+        #print 'procesando cualquera: '
         process_string = '{};{};{};{};{}'.format(nombre,str(self.so.getCurrentTime()),'6','8',36000)
-        print process_string
+        #print process_string

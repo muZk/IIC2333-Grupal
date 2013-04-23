@@ -1,16 +1,1 @@
-hacer_llamada;0;1;0;2277567;15
-recibir_llamada;5;2;0;2277567;15
-enviar_mensajes;3;3;2;2277567;Como va?
-recibir_mensajes;4;4;2;2277567;Bien y tu?
-hacer_llamada;5;1;0;2174199;10
-agregar_contacto;6;5;2;Cristobal Jimenez;2277567
-enviar_mensajes;17;3;2;2277567;Como va?
-recibir_mensajes;18;4;2;2277567;Bien y tu?
-recibir_mensajes;19;4;2;2277567;Bien y tu?
-agregar_contacto;20;5;2;2277567;Cristobal Jimenez
-enviar_mensajes;21;3;2;2277567;Como va?
-recibir_mensajes;22;4;2;2277567;Bien y tu?
-recibir_mensajes;23;4;2;2277567;Bien y tu?
-agregar_contacto;34;5;2;2277567;Cristobal Jimenez
-enviar_mensajes;45;3;2;2277567;Como va?
-recibir_mensajes;46;4;2;2277567;Bien y tu?
+hacer_llamada;0;1;0;2277567;3

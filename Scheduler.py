@@ -103,7 +103,7 @@ class Scheduler:
 			tipo = ">;"
 		else:
 			tipo = "<;"
-		line = str(tipo)+str(self.running.getOtros()[0]) + ";" + str(date) + ";" + str(self.running.getOtros()[1]) + "\n"
+		line = str(tipo)+str(self.running.getOtros()[0]) + ";" + str(date) + ";" + str(self.running.runningTime) + "\n"
 		f.write(line)
 	
 	def registerCalls(self):#guardo llamadas formato >(si es enviada)<(si es recibida);Numero;Fecha;Duracion
@@ -113,7 +113,7 @@ class Scheduler:
 				tipo = ">;"
 			else:
 				tipo = "<;"
-			line = str(tipo)+str(self.running.getOtros()[0]) + ";" + str(date) + ";" + str(self.running.getOtros()[1]) + "\n"
+			line = str(tipo)+str(self.running.getOtros()[0]) + ";" + str(date) + ";" + str(self.running.runningTime) + "\n"
 			f.write(line)
 	
 	def exchange(self,process):
@@ -127,6 +127,7 @@ class Scheduler:
 		self.addProcess(paux)
 	
 	def endProcess(self):
+		print 'Finalizando '+self.running.toString()
 		self.removeProcess(self.running) # removemos el proceso running de memoria
 		self.runningTime = 0
 		if not self.ready.empty():
@@ -142,6 +143,7 @@ class Scheduler:
 	def endProcessByConsole(self,pid_ask):
 		if pid_ask==self.running.pid:
 			self.running.setTimeLeft(self.running.getTimeLeft())
+			#print 'Finalizando proceso '+self.running.toString()
 		else :
 			print "Su proceso está en cola o ya fue ejecutado"
 
@@ -195,5 +197,6 @@ class Scheduler:
 	def clock(self):
 		self.time = self.time + 1
 		if self.running is not None:
-			self.runningTime = self.runningTime + 1					
+			self.runningTime = self.runningTime + 1	
+			self.running.runningTime = self.running.runningTime+1				
 		time.sleep(1)

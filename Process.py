@@ -11,6 +11,7 @@ class Process:
 		self.process_type = int(process_type)
 		self.priority = int(priority)
 		self.otros= otros
+		self.runningTime = 0 # para fixear las cosas con duracion infinita
 		#se define el tiempo de ejecucion segun el tipo de proceso
 		if self.process_type==1 or self.process_type==2:#si es llamar o recibir llamada
 			self.execution_time=int(self.otros[1])
