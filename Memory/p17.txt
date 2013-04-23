@@ -4,17 +4,17 @@ p0
 (dp1
 S'timeLeft'
 p2
-I3
+I36000
 sS'name'
 p3
 S'hacer_llamada'
 p4
 sS'execution_time'
 p5
-I3
+I36000
 sS'execution_date'
 p6
-I42
+I223
 sS'pid'
 p7
 I17
@@ -27,8 +27,8 @@ I0
 sS'otros'
 p10
 (lp11
-S'Cristobal Jimenez\n'
+S'55'
 p12
-aS'3'
+aS'36000'
 p13
 asb.

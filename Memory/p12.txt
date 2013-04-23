@@ -7,20 +7,20 @@ p2
 F1.0
 sS'name'
 p3
-S'enviar_mensajes'
+S'recibir_mensajes'
 p4
 sS'execution_time'
 p5
 F1.0
 sS'execution_date'
 p6
-I45
+I23
 sS'pid'
 p7
 I12
 sS'process_type'
 p8
-I3
+I4
 sS'priority'
 p9
 I2
@@ -29,6 +29,6 @@ p10
 (lp11
 S'2277567'
 p12
-aS'Como va?\n'
+aS'Bien y tu?\n'
 p13
 asb.

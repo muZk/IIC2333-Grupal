@@ -23,9 +23,6 @@ class GUI:
             command = raw_input() # pedimos el input al usuario  
             if command == "1":
                 self.llamar()
-                cortar = raw_input ("Para Cortar presione q")
-                if cortar == "q": 
-                    self.cortar()
             elif command == "2":
                 self.enviar_mensaje()
             elif command == "3":
@@ -54,6 +51,13 @@ class GUI:
                 self.proceso_cualquiera()
             elif command == "0":
                 pass
+            else:
+                # cortar proceso, ifs para que no se caiga cuando ingresan cualquier cosa
+                if len(command)>5: 
+                    if command[:5] == 'quit:':
+                        id = command.split(':')[1]
+                        self.so.endProcessByConsole(int(id))
+                        
         
     def getNumero(self): # con este metodo se obtiene el valor del input para el telefono
         input_numero = raw_input('Ingrese el numero telefonico al cual desea llamar: ')
@@ -82,10 +86,6 @@ class GUI:
         process_string = '{};{};{};{};{};{}'.format('hacer_llamada',str(self.so.getCurrentTime()),'1','0',number,36000)
         print process_string
         self.so.loadProcessFromString(process_string)
-
-    def cortar(self):
-        print 'Cortando llamada'
-        self.so.endProcess()
 
     def enviar_mensaje(self):
         process_string = '{};{};{};{};{};{}'.format('enviar_mensaje',str(self.so.getCurrentTime()),'3','2',self.getNumeroMensaje(),self.getMensaje())
@@ -164,16 +164,37 @@ class GUI:
         print 'Ejecutar proceso'
         process_string = raw_input("Ingrese el comando: ")
         print process_string
-        self.so.loadProcessFromString(process_string)
+        self.so.loadProcessFromString(process_string,False)
 
     def ver_ubicacion(self):
-        pass
+        print 'Viendo ubicacion: '
+        process_string = '{};{};{};{};{}'.format('ver_ubicacion',str(self.so.getCurrentTime()),'8','8',36000)
+        print process_string
+        self.so.loadProcessFromString(process_string)
         
     def mandar_ubicacion(self):
-        pass
+        #demora 2
+        print 'Mandando ubicacion: '
+        process_string = '{};{};{};{};{}'.format('mandar_ubicacion',str(self.so.getCurrentTime()),'7','8',2)
+        print process_string
+        self.so.loadProcessFromString(process_string)
+        
     def jugar(self):
-        pass
+        nombre = raw_input("¿Que desea jugar?")
+        print 'Jugando: '
+        process_string = '{};{};{};{};{}'.format(nombre,str(self.so.getCurrentTime()),'9','8',36000)
+        print process_string
+        self.so.loadProcessFromString(process_string)
+        
     def escuchar_musica(self):
-        pass
+        print 'musica: '
+        process_string = '{};{};{};{};{}'.format('escuchar_musica',str(self.so.getCurrentTime()),'10','8',36000)
+        print process_string
+        self.so.loadProcessFromString(process_string)
+        
     def proceso_cualquiera(self):
-        pass
+        nombre = raw_input("¿Que desea ejecutar?")
+        print 'procesando cualquera: '
+        process_string = '{};{};{};{};{}'.format(nombre,str(self.so.getCurrentTime()),'6','8',36000)
+        print process_string
+        self.so.loadProcessFromString(process_string)

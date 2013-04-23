@@ -29,13 +29,17 @@ class Scheduler:
 		if self.running == process:
 			self.running = None
 			
-	def loadProcessFromString(self,line):
+	def loadProcessFromString(self,line,cor=True):
 		atr = line.split(';')
 		otros = list()
 		for i in range(4, len(atr)):
 			otros.append(atr[i])
 		print otros
-		p = Process.Process(self.IdCounter,atr[0],atr[1],atr[2],atr[3],otros)
+		if atr[2]=="1" or atr[2]=="6" or atr[2]=="8" or atr[2]=="9" or atr[2]=="10":
+			cortar = cor
+		else:
+			cortar = False
+		p = Process.Process(self.IdCounter,atr[0],atr[1],atr[2],atr[3],otros,cortar) 
 		self.addProcess(p)
 		#self.incomingProcesses.append(p)
 		self.IdCounter=self.IdCounter+1
@@ -49,7 +53,7 @@ class Scheduler:
 			otros = list()
 			for i in range(4, len(atr)):
 				otros.append(atr[i])
-			p = Process.Process(self.IdCounter,atr[0],atr[1],atr[2],atr[3],otros)
+			p = Process.Process(self.IdCounter,atr[0],atr[1],atr[2],atr[3],otros,False)
 			self.incomingProcesses.append(p)
 			self.IdCounter=self.IdCounter+1
 		self.incomingProcesses.sort(key = lambda Process: -Process.execution_date) #ordeno por orden de llegada
@@ -118,6 +122,8 @@ class Scheduler:
 		self.runningTime=0
 		paux = self.running
 		self.running = process
+		if self.running.cortable == True:
+			print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
 		self.addProcess(paux)
 	
 	def endProcess(self):
@@ -126,13 +132,14 @@ class Scheduler:
 		if not self.ready.empty():
 			priority, pid = self.ready.get()
 			self.running = self.loadProcessFromMemory(pid) # nuevo proceso entra
+			if self.running.cortable == True:
+				print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
 		else:
 			print 'Scheduler.endProcess no hay procesos en cola ready'
 	
 	def endProcessByConsole(self,pid_ask):
 		if pid_ask==self.running.pid:
-
-			self.running.setTimeLeft(0)
+			self.running.setTimeLeft(self.running.getTimeLeft())
 		else :
 			print "Su proceso está en cola o ya fue ejecutado"
 
@@ -152,6 +159,8 @@ class Scheduler:
 				priority, pid = self.ready.get()
 				# cargamos desde Memoria
 				self.running = self.loadProcessFromMemory(pid)
+				if self.running.cortable == True:
+					print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
 			
 	def checkIncomingProc(self,t):
 		while len(self.incomingProcesses)>0:
@@ -181,5 +190,6 @@ class Scheduler:
 
 	def clock(self):
 		self.time = self.time + 1
-		self.runningTime = self.runningTime + 1					
+		if self.running is not None:
+			self.runningTime = self.runningTime + 1					
 		time.sleep(1)
