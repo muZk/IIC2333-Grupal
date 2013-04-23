@@ -50,9 +50,6 @@ class GUI:
         input_numero = raw_input('Ingrese el numero telefonico al cual desea enviar el mensaje: ')
         return input_numero
     
-    def getMensaje(self): # con este metodo se obtiene el valor del input para el mensaje
-        input_mensaje = raw_input('Ingrese el Mensaje de Texto: ')
-        return input_mensaje
     
     def getNombreContacto(self): # con este metodo se obtiene el valor del input para el mensaje
         input_mensaje = raw_input('Ingrese el nombre del contacto que desea agregar: ')
@@ -115,6 +112,7 @@ class GUI:
         
     def ver_procesos(self):
         print 'Ver Procesos'
+        self.so.showActiveProcess()
         
     def ejecutar_proceso(self):
         print 'Ejecutar proceso'
