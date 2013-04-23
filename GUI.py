@@ -93,7 +93,7 @@ class GUI:
         print process_string
         self.so.loadProcessFromString(process_string)
         
-    def ver_contactos(self):
+   def ver_contactos(self):
         print 'Viendo contactos'
         print 'Contactos'
         f=open("Contactos.txt", "r")
@@ -104,6 +104,26 @@ class GUI:
             numLinea=numLinea+1
             contact = linea.split(';')
             print str(numLinea)+") Nombre: "+contact[0]+"\t   Numero: "+contact[1]+"\n"
+        numero = str(raw_input("a) Para volver al menu principal presione q\nb) Si desea llamar a un contacto presione el numero del contacto en la agenda recien desplegada\n(No el numero de telefono, sino que el de la ubicacion en la lista)\n"))
+        if numero == 'q':
+            pass
+        else:
+            f2=open("Contactos.txt", "r")
+            numLinea2=0
+            try:
+                while True:
+                    linea2=f2.readline()
+                    if not linea2: break
+                    numLinea2=numLinea2+1
+                    if numLinea2==int(numero):
+                        contacto = linea2.split(';')
+                        print 'Llamando a: '+contacto[0]
+                        process_string = '{};{};{};{};{};{}'.format('hacer_llamada',str(self.so.getCurrentTime()),'1','0',contacto[1],10)
+                        print process_string
+                        self.so.loadProcessFromString(process_string)
+                        break
+            except:
+                print "Error al ingresar datos, vuelva a intentar"
 
     def agregar_contacto(self):
         print 'Agregando contacto'
