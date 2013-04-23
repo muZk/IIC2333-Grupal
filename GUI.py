@@ -15,7 +15,7 @@ class GUI:
         self.mainloop()
         
     def opciones(self):
-        return "(1) Llamar\n(2) Mandar mensaje\n(3) Ver contactos\n(4) Revisar historial\n(5) Ver procesos\n(6) Cargar archivo\n(7) Ejecutar proceso\n(8) Ver mensajes\n(9) Agregar contacto\n(0) Salir\n"
+        return "(1) Llamar\n(2) Mandar mensaje\n(3) Ver contactos\n(4) Revisar historial\n(5) Ver procesos\n(6) Cargar archivo\n(7) Ejecutar proceso\n(8) Ver mensajes\n(9) Agregar contacto\n(10) Ver ubicación\n(11) Mandar ubicación\n(12) Jugar\n(13) Escuchar música\n(14) Proceso cualquiera\n(0) Salir\n"
 
     def mainloop(self):
         run = True
@@ -42,6 +42,17 @@ class GUI:
                 self.ver_mensajes()
             elif command == "9":
                 self.agregar_contacto()
+             elif command == "10":
+                self.ver_ubicacion()
+            elif command == "11":
+                self.mandar_ubicacion()
+            elif command == "12":
+                self.jugar()
+            elif command == "13":
+                self.escuchar_musica()
+            elif command=="14" 
+                self.proceso_cualquiera()
+                
             elif command == "0":
                 pass
         
@@ -126,3 +137,15 @@ class GUI:
         process_string = raw_input("Ingrese el comando: ")
         print process_string
         self.so.loadProcessFromString(process_string)
+
+    def ver_ubicacion(self):
+        pass
+        
+    def mandar_ubicacion(self):
+        pass
+    def jugar(self):
+        pass
+    def escuchar_musica(self):
+        pass
+    def proceso_cualquiera(self);
+        pass
