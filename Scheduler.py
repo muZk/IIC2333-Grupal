@@ -129,6 +129,13 @@ class Scheduler:
 		else:
 			print 'Scheduler.endProcess no hay procesos en cola ready'
 	
+	def endProcessByConsole(self,pid_ask):
+		if pid_ask==self.running.pid:
+
+			self.running.setTimeLeft(0)
+		else :
+			print "Su proceso está en cola o ya fue ejecutado"
+
 	def checkPriorities(self):
 			#ver si existe un proceso con mayor prioridad que running y si es necesario hacer los cambios
 			if self.running is not None:#si se esta corriendo un proceso
