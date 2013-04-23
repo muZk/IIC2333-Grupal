@@ -86,10 +86,13 @@ class GUI:
         print 'Viendo contactos'
         print 'Contactos'
         f=open("Contactos.txt", "r")
+        numLinea = 0
         while True:
             linea = f.readline()
             if not linea: break
-            print linea
+            numLinea=numLinea+1
+            contact = linea.split(';')
+            print str(numLinea)+") Nombre: "+contact[0]+"\t   Numero: "+contact[1]+"\n"
 
     def agregar_contacto(self):
         print 'Agregando contacto'
@@ -120,6 +123,6 @@ class GUI:
         
     def ejecutar_proceso(self):
         print 'Ejecutar proceso'
-        process_string = "Ingrese el comando: "
+        process_string = raw_input("Ingrese el comando: ")
         print process_string
         self.so.loadProcessFromString(process_string)
