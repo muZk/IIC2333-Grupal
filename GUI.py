@@ -42,7 +42,7 @@ class GUI:
                 self.ver_mensajes()
             elif command == "9":
                 self.agregar_contacto()
-             elif command == "10":
+            elif command == "10":
                 self.ver_ubicacion()
             elif command == "11":
                 self.mandar_ubicacion()
@@ -50,9 +50,8 @@ class GUI:
                 self.jugar()
             elif command == "13":
                 self.escuchar_musica()
-            elif command=="14" 
+            elif command == "14":
                 self.proceso_cualquiera()
-                
             elif command == "0":
                 pass
         
@@ -93,7 +92,7 @@ class GUI:
         print process_string
         self.so.loadProcessFromString(process_string)
         
-   def ver_contactos(self):
+    def ver_contactos(self):
         print 'Viendo contactos'
         print 'Contactos'
         f=open("Contactos.txt", "r")
@@ -132,21 +131,30 @@ class GUI:
         self.so.loadProcessFromString(process_string)
         
     def historial_llamadas(self):
-        print 'Historial llamadas'
+        print 'Historial llamadas\n'
         f=open("Historial.txt", "r")
         while True:
             linea = f.readline()
             if not linea: break
-            print linea
+            llamada = linea.split(';')
+            tipo = " Realizada"
+            if llamada[0] == "<": tipo=" Recibida"
+            if len(llamada)>1:
+                print "Llamada"+tipo+"\t Numero: "+llamada[1]+"\t Fecha: "+llamada[2]+"\t Duracion: "+llamada[3]+"\n"
 
     def ver_mensajes(self):
-        print 'Ver mensajes'
+        print 'Ver mensajes\n'
         print 'Historial mensajes'
         f=open("Mensajes.txt", "r")
         while True:
             linea = f.readline()
             if not linea: break
-            print linea
+            mensaje = linea.split(';')
+            tipo = " Enviado"
+            if mensaje[0] == "<": tipo=" Recibido"
+            if len(mensaje)>1:
+                print "Mensaje"+tipo+"\t Numero: "+mensaje[1]+"\t Fecha: "+mensaje[2]+"\t Texto: "+mensaje[3]+"\n"
+
         
     def ver_procesos(self):
         print 'Ver Procesos'
@@ -167,5 +175,5 @@ class GUI:
         pass
     def escuchar_musica(self):
         pass
-    def proceso_cualquiera(self);
+    def proceso_cualquiera(self):
         pass
