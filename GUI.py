@@ -199,4 +199,8 @@ class GUI:
         print 'procesando cualquera: '
         process_string = '{};{};{};{};{}'.format(nombre,str(self.so.getCurrentTime()),'6','8',36000)
         print process_string
+<<<<<<< HEAD
         self.so.loadProcessFromString(process_string)
+=======
+        self.so.loadProcessFromString(process_string)
+>>>>>>> 528f84f152f56291acb2365c0960724454dc632b

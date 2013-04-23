@@ -4,7 +4,7 @@ import math
 import time
 
 class Process:
-	def __init__(self,pid,name,execution_date,process_type,priority,otros):
+	def __init__(self,pid,name,execution_date,process_type,priority,otros,cortable):
 		self.pid = pid
 		self.name = name
 		self.execution_date = int(execution_date)
@@ -23,6 +23,7 @@ class Process:
 			self.execution_time=int(self.otros[0])
 		#se crea la variable que guarda el tiempo restante para que el proceso termine de ejecutarse
 		self.timeLeft = self.execution_time
+		self.cortable=cortable
 	
 	def getPriority(self):
 		return self.priority

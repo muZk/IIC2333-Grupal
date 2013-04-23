@@ -4,24 +4,20 @@ p0
 (dp1
 S'timeLeft'
 p2
-I36000
+I3
 sS'name'
 p3
 S'hacer_llamada'
 p4
 sS'execution_time'
 p5
-I36000
+I3
 sS'execution_date'
 p6
-<<<<<<< HEAD
-I111
-=======
-I223
->>>>>>> 528f84f152f56291acb2365c0960724454dc632b
+I42
 sS'pid'
 p7
-I17
+I19
 sS'process_type'
 p8
 I1
@@ -31,12 +27,8 @@ I0
 sS'otros'
 p10
 (lp11
-<<<<<<< HEAD
-S'999'
-=======
-S'55'
->>>>>>> 528f84f152f56291acb2365c0960724454dc632b
+S'Cristobal Jimenez\n'
 p12
-aS'36000'
+aS'3'
 p13
 asb.
