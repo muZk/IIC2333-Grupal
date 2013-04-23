@@ -154,17 +154,23 @@ class Scheduler:
 			else:
 				break
 	def showActiveProcess(self):
+		# running
+		print "------------------------------"
 		if self.running is not None:
-			print "Running: "+ str(self.running.pid) +" - "+str(self.running.name)
-			print "Ready:\n"
-			if not self.ready.empty():
-				for p in self.ready:
-					print str(self.readProcessFromMemory(p.pid).pid)+" - "+ str(self.readProcessFromMemory(p.pid).name)+"\n"
-			else:
-				print "No hay procesos en Ready"
+			print "Running:\npid = "+ str(self.running.pid) +" name = "+str(self.running.name)
 		else:
-		    print "No hay procesos en ejecucion"
-
+			print "No hay procesos en running"	
+		# ready
+		if not self.ready.empty():
+			print 'Ready:'
+			for p in self.ready.queue:
+				pid = p[1]
+				process = self.readProcessFromMemory(pid)
+				if process is not None: # por si las moscas!
+					print "pid = "+str(process.pid)+" name = "+ process.name
+		else:
+			print "No hay procesos en Ready"
+		print "------------------------------"
 
 	def clock(self):
 		self.time = self.time + 1
