@@ -4,23 +4,23 @@ p0
 (dp1
 S'timeLeft'
 p2
-I2
+F1.0
 sS'name'
 p3
-S'agregar_contacto'
+S'enviar_mensajes'
 p4
 sS'execution_time'
 p5
-I2
+F1.0
 sS'execution_date'
 p6
-I20
+I45
 sS'pid'
 p7
-I9
+I12
 sS'process_type'
 p8
-I5
+I3
 sS'priority'
 p9
 I2
@@ -29,6 +29,6 @@ p10
 (lp11
 S'2277567'
 p12
-aS'Cristobal Jimenez\n'
+aS'Como va?\n'
 p13
 asb.
