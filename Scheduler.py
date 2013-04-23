@@ -34,7 +34,7 @@ class Scheduler:
 		otros = list()
 		for i in range(4, len(atr)):
 			otros.append(atr[i])
-		print otros
+		#print otros
 		if atr[2]=="1" or atr[2]=="6" or atr[2]=="8" or atr[2]=="9" or atr[2]=="10":
 			cortar = cor
 		else:
@@ -78,7 +78,7 @@ class Scheduler:
 	def checkIfFinished(self):
 		if self.running is not None:
 			real_time_left = self.running.getTimeLeft() - self.runningTime;
-			print 'checkIfFinished - pid '+str(self.running.pid)+' prioridad: '+str(self.running.priority)+' timeLeft: ' + str(real_time_left)
+			#print 'checkIfFinished - pid '+str(self.running.pid)+' prioridad: '+str(self.running.priority)+' timeLeft: ' + str(real_time_left)
 			if real_time_left<=0:
 				self.registerLog()
 				self.endProcess()
@@ -132,10 +132,12 @@ class Scheduler:
 		if not self.ready.empty():
 			priority, pid = self.ready.get()
 			self.running = self.loadProcessFromMemory(pid) # nuevo proceso entra
+			print "Ejecutando "+self.running.toString()+" t = "+str(self.time)
 			if self.running.cortable == True:
 				print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
 		else:
-			print 'Scheduler.endProcess no hay procesos en cola ready'
+			#print 'No hay procesos en cola ready'
+			pass
 	
 	def endProcessByConsole(self,pid_ask):
 		if pid_ask==self.running.pid:
@@ -154,11 +156,13 @@ class Scheduler:
 					else:
 						self.ready.put((priority,pid))
 				else:
-					print 'Scheduler.checkPriorities no hay procesos en cola ready'
+					pass
+					#print 'No hay procesos en cola ready'
 			elif not self.ready.empty(): # self.running es null y tenemos procesos en cola
 				priority, pid = self.ready.get()
 				# cargamos desde Memoria
 				self.running = self.loadProcessFromMemory(pid)
+				print 'Ejecutando '+self.running.toString() + ' t = ' + str(self.time)
 				if self.running.cortable == True:
 					print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
 			

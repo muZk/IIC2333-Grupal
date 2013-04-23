@@ -17,7 +17,7 @@ class Memory:
         
     @staticmethod
     def loadProcess(pid):
-        print "Loading from memory pid = %i" % pid
+        #print "Loading from memory pid = %i" % pid
         filePath = Memory.fileName(pid)
         if os.path.exists(filePath):
             f = open(filePath,'rb') # r abre para leer, y b me dice que lo haga en binario
@@ -36,7 +36,7 @@ class Memory:
 
     @staticmethod
     def removeProcess(pid):
-        print "Removing from memory pid = %i " % pid
+        #print "Removing from memory pid = %i " % pid
         try:
             os.remove(Memory.fileName(pid))
             return True
