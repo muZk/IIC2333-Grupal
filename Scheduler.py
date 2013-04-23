@@ -56,6 +56,9 @@ class Scheduler:
 	def loadProcessFromMemory(self,pid):
 		return Memory.loadProcess(pid)
 
+	def readProcessFromMemory(self,pid):
+		return Memory.readProcess(pid)
+
 	def priorityScheduler(self):
 		while True:
 			#Revisar si llega alguien en el tiempo time y meterlo a la cola de prioridades
@@ -109,7 +112,7 @@ class Scheduler:
 			f.write(line)
 	
 	def exchange(self,process):
-		print 'Expropiaci�n de '+self.running.toString()+' por '+process.toString();
+		print 'Expropiacion de '+self.running.toString()+' por '+process.toString();
 		self.running.setTimeLeft(self.runningTime)
 		self.runningTime=0
 		paux = self.running
@@ -149,7 +152,14 @@ class Scheduler:
 				self.addProcess(self.incomingProcesses.pop())
 			else:
 				break
-		
+	def showActiveProcess(self):
+		print "Running: "+self.running.name
+	    print "Ready:\n"
+		for p in self.ready:
+			print readProcessFromMemory(p.id).name+" - "+readProcessFromMemory(p.id).name+"\n"
+
+
+
 	def clock(self):
 		self.time = self.time + 1
 		self.runningTime = self.runningTime + 1					

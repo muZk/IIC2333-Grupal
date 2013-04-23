@@ -43,38 +43,81 @@ class GUI:
                 pass
         
     def getNumero(self): # con este metodo se obtiene el valor del input para el telefono
-        input_numero = raw_input('Ingrese el número Telefónico al cual desea llamar')
+        input_numero = raw_input('Ingrese el numero telefonico al cual desea llamar: ')
+        return input_numero
+
+    def getNumeroMensaje(self): # con este metodo se obtiene el valor del input para el telefono
+        input_numero = raw_input('Ingrese el numero telefonico al cual desea enviar el mensaje: ')
         return input_numero
     
     def getMensaje(self): # con este metodo se obtiene el valor del input para el mensaje
-        input_mensaje = raw_input('Ingrese el Mensaje de Texto')
+        input_mensaje = raw_input('Ingrese el Mensaje de Texto: ')
+        return input_mensaje
+    
+    def getNombreContacto(self): # con este metodo se obtiene el valor del input para el mensaje
+        input_mensaje = raw_input('Ingrese el nombre del contacto que desea agregar: ')
+        return input_mensaje
+    
+    def getNumeroContacto(self): # con este metodo se obtiene el valor del input para el mensaje
+        input_mensaje = raw_input('Ingrese el numero telefonico que desea agregar: ')
+        return input_mensaje
+    
+    def getMensaje(self): # con este metodo se obtiene el valor del input para el mensaje
+        input_mensaje = raw_input('Ingrese el Mensaje de Texto: ')
         return input_mensaje
         
     def llamar(self):
         print 'Llamando a {}'.format(self.getNumero())
-        
+        process_string = '{};{};{};{};{}'.format('hacer_llamada',str(self.so.getCurrentTime()),'1','0',self.getNumero(),36000)
+        print process_string
+        self.so.loadProcessFromString(process_string)
+
     def cortar(self):
         print 'Cortando llamada'
-        
+        self.so.endProcess()
+
     def enviar_mensaje(self):
-        process_string = '{};{};{};{};{};{}'.format('enviar_mensaje',str(self.so.getCurrentTime()),'3','2',self.getNumero(),self.getMensaje())
+        process_string = '{};{};{};{};{};{}'.format('enviar_mensaje',str(self.so.getCurrentTime()),'3','2',self.getNumeroMensaje(),self.getMensaje())
         print process_string
         self.so.loadProcessFromString(process_string)
         
     def ver_contactos(self):
         print 'Viendo contactos'
-        
+        print 'Contactos'
+        f=open("Contactos.txt", "r")
+        while True:
+            linea = f.readline()
+            if not linea: break
+            print linea
+
     def agregar_contacto(self):
         print 'Agregando contacto'
+        process_string = '{};{};{};{};{};{}'.format('nuevo_contacto',str(self.so.getCurrentTime()),'5','6', self.getNombreContacto(), self.getNumeroContacto())
+        print process_string
+        self.so.loadProcessFromString(process_string)
         
     def historial_llamadas(self):
         print 'Historial llamadas'
-        
+        f=open("Historial.txt", "r")
+        while True:
+            linea = f.readline()
+            if not linea: break
+            print linea
+
     def ver_mensajes(self):
         print 'Ver mensajes'
+        print 'Historial mensajes'
+        f=open("Mensajes.txt", "r")
+        while True:
+            linea = f.readline()
+            if not linea: break
+            print linea
         
     def ver_procesos(self):
         print 'Ver Procesos'
         
     def ejecutar_proceso(self):
         print 'Ejecutar proceso'
+        process_string = "Ingrese el comando: "
+        print process_string
+        self.so.loadProcessFromString(process_string)

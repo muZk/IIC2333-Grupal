@@ -26,6 +26,15 @@ class Memory:
         return None # si no est� en memoria el proceso
     
     @staticmethod
+    def readProcess(pid):
+        filePath = Memory.fileName(pid)
+        if os.path.exists(filePath):
+            f = open(filePath,'rb') # r abre para leer, y b me dice que lo haga en binario
+            p = pickle.load(f) # esto corresponde a una instancia de nuestra clase "Process"
+            return p
+        return None # si no est� en memoria el proceso
+
+    @staticmethod
     def removeProcess(pid):
         print "Removing from memory pid = %i " % pid
         try:
