@@ -1,10 +1,5 @@
-import multiprocessing
 import Scheduler
-import tkFileDialog
-import multiprocessing
-import time
 import thread
-import threading
 import GUI
 
 def _gui_init(so):
