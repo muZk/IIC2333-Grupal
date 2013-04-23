@@ -153,7 +153,7 @@ class Scheduler:
 			else:
 				break
 	def showActiveProcess(self):
-		print "Running: "+ self.runnig.pid +" - "+self.running.name
+		print "Running: "+ self.running.pid +" - "+self.running.name
 	    print "Ready:\n"
 		for p in self.ready:
 			print self.readProcessFromMemory(p.pid).pid+" - "+ self.readProcessFromMemory(p.pid).name+"\n"
