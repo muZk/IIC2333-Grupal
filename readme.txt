@@ -25,3 +25,4 @@ que no salen en los ejemplos, será 8.
 - ejecutar procesos pide como input una cadena del misno formato q las q viene en archivo .txt
 
 
+
