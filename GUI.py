@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import Tkinter
-import tkFileDialog
-import multiprocessing
-import time
-import Process
-import thread
-
 class GUI:
     def __init__(self,so):
         
