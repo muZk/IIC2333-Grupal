@@ -14,7 +14,10 @@
 (13) Proceso cualquiera
 (0) Salir
 
+- El archivo que se ejecuta para comenzar el programa es "Main.py"
 - Se cargan archivos editando example.txt
 - example.txt es una de las pertecencias, debe existir.
 - Se asume que los comandos de example.txt están bien escritos
 - Puede ir vacío si no se quiere cargar comandos
+
+
