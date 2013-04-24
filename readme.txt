@@ -19,5 +19,7 @@
 - example.txt es una de las pertecencias, debe existir.
 - Se asume que los comandos de example.txt están bien escritos
 - Puede ir vacío si no se quiere cargar comandos
+- Asumimos que la Prioridad_Base de los procesos es igual a los archivos de ejemplo, y para el caso de los procesos
+que no salen en los ejemplos, será 8.
 
 
