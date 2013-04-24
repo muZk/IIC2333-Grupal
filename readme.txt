@@ -21,5 +21,7 @@
 - Puede ir vacío si no se quiere cargar comandos
 - Asumimos que la Prioridad_Base de los procesos es igual a los archivos de ejemplo, y para el caso de los procesos
 que no salen en los ejemplos, será 8.
+- tipo de agregar contacto se asume q es 2
+- ejecutar procesos pide como input una cadena del misno formato q las q viene en archivo .txt
 
 
