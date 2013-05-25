@@ -2,6 +2,7 @@
 
 import math
 import time
+from IO import IO
 
 class Process:
 	def __init__(self,pid,name,execution_date,process_type,priority,otros,cortable):
@@ -25,6 +26,50 @@ class Process:
 		#se crea la variable que guarda el tiempo restante para que el proceso termine de ejecutarse
 		self.timeLeft = self.execution_time
 		self.cortable=cortable
+		
+		# Definimos lo que bloquea el proceso
+		self.block = list()
+		self.need = None
+		self.use = list()
+		
+		"  Las definiciones salen en la tabla de la pagina 3 de la tarea "
+		
+		# PANTALLA
+		if self.process_type in [1,2,5,8,10]:
+			self.use.append(IO.PANTALLA)
+			
+		# AUDIFONO
+		if self.process_type in [3,4,6,9,10]:
+			self.use.append(IO.AUDIFONO)
+			
+		# MICROFONO
+		if self.process_type in [6] :
+			self.use.append(IO.MICROFONO)
+		
+		# GPS
+		if self.process_type in [6,7,8,9]:
+			self.use.append(IO.GPS)
+		
+		# ENVIAR
+		if self.process_type in [1,2,3,4,6,7,9]:
+			self.use.append(IO.ENVIAR)
+		
+		# RECIBIR
+		if self.process_type in [1,2,3,4,6,9]:
+			self.use.append(IO.RECIBIR)
+		
+		# ================== BLOQUEAR ===================
+		
+		# AUDIFONO y MICROFONO
+		if self.process_type in [1,2]:
+			self.block.append(IO.AUDIFONO)
+			self.block.append(IO.MICROFONO)
+			
+		# ================== NECESITAR ===================
+		
+		# PANTALLA
+		if self.process_type in [6,9]:
+			self.need = IO.PANTALLA
 	
 	def getPriority(self):
 		return self.priority
@@ -44,59 +89,9 @@ class Process:
 	def getExecutionDate(self):
 		return self.execution_date
 
-	def realizar_llamada(self):
-		#print "Llamando a "+otros[0]+"..."
-		#time.sleep(otros[1]))
-		#print "Llamada finalizada"
-		pass
-
-	def recibir_llamada(self):
-		#print "Llamada entrante de "+otros[0]+"..."
-		#time.sleep(otros[1]))
-		#print "Llamada finalizada"
-		pass
-		
-	def enviar_mensaje(self):
-		#print "Enviando a "+otros[0]+"..."
-		#time.sleep(len(otros[1])*20/1000)
-		#print "Mensaje enviado"
-		pass
-
-	def recibir_mensaje(self):
-		#print "Mensaje entrante de "+otros[0]+"..."
-		#time.sleep(len(otros[1])*20/1000)
-		#print "Mensaje recibido"
-		pass
-
-	def enviar_ubicacion(self):
-		#print "Enviando ubicación..."
-		#time.sleep(otros[0]))
-		#print "Ubicación enviada"
-		pass
-
-	def ver_ubicacion(self):
-		#print "Viendo ubicación..."
-		#time.sleep(2)
-		#print "Ubicación vista"
-		pass
-
-	def jugar(self):
-		#print "Jugando..."
-		#time.sleep(otros[0]))
-		#print "Realizado"
-		pass
-
-	def escuchar_musica(self):
-		#print "Escuchando..."
-		#time.sleep(otros[0]))
-		#print "Realizado"
-		pass
-		
-	def cualquiera(self):
-		#print "Ejecutando "+name+"..."
-		#time.sleep(otros[0]))
-		#print "Realizado"
-		pass
-
 	def toString(self):
 		return '(name={},pid={},priority={},type={})'.format(self.name,str(self.pid),str(self.priority),str(self.process_type))
+
+	def needsIO(self):
+		return self.need != None
+	

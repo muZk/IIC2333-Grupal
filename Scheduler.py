@@ -3,9 +3,17 @@ import Queue
 import Process
 import datetime
 import time
+from IO import IO
 from Memory import Memory 	
 
 class Scheduler:
+	
+	USED = "Utilizandose"
+	FREE = "Disponible"
+	BLOCKED = "Bloqueado"
+	
+	global USED, FREE, BLOCKED
+
 	def __init__(self):
 		self.ready = Queue.PriorityQueue()
 		self.running = None
@@ -14,6 +22,22 @@ class Scheduler:
 		self.incomingProcesses = list()
 		self.time=0 #variable que registra el tiempo
 		self.ejecutandose=True
+		self.quantum = 1
+		
+		# Necesitamos guardar el estado de cada dispositivo. Todos parten "FREE"
+		self.estado = []
+		for io in range(0,6):
+			self.estado[io] = FREE
+			
+		# Cada IO tendra una lista de procesos que lo usan	
+		self.processIn = list()
+		for io in range(0,6):
+			self.processIn[io] = list()
+			
+		# Necesitamos una lista de procesos corriendo en paralelo
+		self.pararellRunning = list()
+		
+		
 	def getCurrentTime(self):
 		return self.time
 
@@ -22,6 +46,48 @@ class Scheduler:
 		print 'Agregando ... {}'.format(process.toString())
 		# Agregamos el proceso en memoria:
 		Memory.saveProcess(process)
+		
+	def XXXXX(self,process):
+		# el proceso necesita algun periferico?
+		if process.needsIO() :
+			# =============== Process necesita IO.PANTALLA  ===============
+			expropiarCount = 0
+			# hay procesos usando pantalla?
+			if len(self.processIn[IO.PANTALLA])>0:
+				# verificar que tenga mejor prioridad que los que estan usando pantalla
+				for p in self.processIn[IO.PANTALLA]:
+					if p.priority > process.priority:
+						expropiarCount += 1
+				# ver si es mejor que todos
+				if expropiarCount == len(self.processIn[IO.PANTALLA	]):
+					# expropiamos todos los que usan pantalla
+					pass
+			else:
+				# No hay procesos usando IO.PANTALLA asi que podemos llegary usarlo
+				pass
+		else:
+			# =============== Expropiacion  ===============
+			# Ocurre si el proceso que entra USA un IO que esta siendo usado por un proceso que lo NECESITA
+			# El unico IO que puede tener procesos que lo necesiten es IO.PANTALLA
+			if IO.PANTALLA in process.use:
+				if len(self.processIn[IO.PANTALLA]) > 0 :
+					p = self.processIn[IO.PANTALLA][0]
+					if p.need != None:
+						if process.priority < p.priority:
+							# expropiacion:
+							#	1) p pasa a waiting
+							#	2) process pasa a runningPararell
+							#	3) ver si algun waiting entra
+							pass
+						else:
+							# processs pasa a Waiting
+							pass
+					else:
+						# no hubo expropiacion
+						#	process pasa a runningPararell
+						pass
+				
+				
 		
 	def removeProcess(self,process):
 		# Removemos un proceso
