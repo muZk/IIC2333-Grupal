@@ -7,12 +7,6 @@ from IO import IO
 from Memory import Memory 	
 
 class Scheduler:
-	
-	USED = "Utilizandose"
-	FREE = "Disponible"
-	BLOCKED = "Bloqueado"
-	
-	global USED, FREE, BLOCKED
 
 	def __init__(self):
 		self.ready = Queue.PriorityQueue()
@@ -23,11 +17,6 @@ class Scheduler:
 		self.time=0 #variable que registra el tiempo
 		self.ejecutandose=True
 		self.quantum = 1
-		
-		# Necesitamos guardar el estado de cada dispositivo. Todos parten "FREE"
-		self.estado = []
-		for io in range(0,6):
-			self.estado[io] = FREE
 			
 		# Cada IO tendra una lista de procesos que lo usan	
 		self.processIn = list()
@@ -36,7 +25,6 @@ class Scheduler:
 			
 		# Necesitamos una lista de procesos corriendo en paralelo
 		self.pararellRunning = list()
-		
 		
 	def getCurrentTime(self):
 		return self.time
@@ -47,7 +35,16 @@ class Scheduler:
 		# Agregamos el proceso en memoria:
 		Memory.saveProcess(process)
 		
-	def XXXXX(self,process):
+	def appendProcess(self,process):
+		# pasó todos los malditos filtros, ahora puede correr tranquilamente
+		for io in process.use:
+			self.processIn[io].append(process)
+		# agregamos a la running
+		self.pararellRunning.append(process)
+		# guardamos en memoria... aunque como lo tamos haciendo ya no es necesario
+		Memory.saveProcess(process)
+		
+	def addProcess2(self,process):
 		# el proceso necesita algun periferico?
 		if process.needsIO() :
 			# =============== Process necesita IO.PANTALLA  ===============
@@ -55,8 +52,9 @@ class Scheduler:
 			# hay procesos usando pantalla?
 			if len(self.processIn[IO.PANTALLA])>0:
 				# verificar que tenga mejor prioridad que los que estan usando pantalla
+				# OJO los que bloquean no pueden ser expropiados
 				for p in self.processIn[IO.PANTALLA]:
-					if p.priority > process.priority:
+					if p.priority > process.priority and len(p.block)==0 :
 						expropiarCount += 1
 				# ver si es mejor que todos
 				if expropiarCount == len(self.processIn[IO.PANTALLA	]):
@@ -73,7 +71,7 @@ class Scheduler:
 				if len(self.processIn[IO.PANTALLA]) > 0 :
 					p = self.processIn[IO.PANTALLA][0]
 					if p.need != None:
-						if process.priority < p.priority:
+						if process.priority < p.priority and len(p.block)==0:
 							# expropiacion:
 							#	1) p pasa a waiting
 							#	2) process pasa a runningPararell
