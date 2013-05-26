@@ -44,46 +44,69 @@ class Scheduler:
 		# guardamos en memoria... aunque como lo tamos haciendo ya no es necesario
 		Memory.saveProcess(process)
 		
-	def addProcess2(self,process):
-		# el proceso necesita algun periferico?
-		if process.needsIO() :
-			# =============== Process necesita IO.PANTALLA  ===============
-			expropiarCount = 0
-			# hay procesos usando pantalla?
-			if len(self.processIn[IO.PANTALLA])>0:
-				# verificar que tenga mejor prioridad que los que estan usando pantalla
-				# OJO los que bloquean no pueden ser expropiados
-				for p in self.processIn[IO.PANTALLA]:
-					if p.priority > process.priority and len(p.block)==0 :
-						expropiarCount += 1
-				# ver si es mejor que todos
-				if expropiarCount == len(self.processIn[IO.PANTALLA	]):
-					# expropiamos todos los que usan pantalla
+	def addProcess2(self,process): #FALTA implementar los if
+		if process.getProcessType() in [1,2,3,4]:
+			#Si es una llamada: (1 y 2)
+			#	Entra solo si no hay algun proceso bloqueando audifonos y microfonos (1)
+			#	Expropia a todos los procesos que esten usando los audifonos y/o microfonos (3,4,6,9 y 10)
+			#Enviar y recibir mensajes: (3 y 4)
+			#	Entra solo si no hay un proceso bloqueando los audifonos (1 y 2)
+			#	No expropia
+			entra = True #variable que es True si el proceso debiese entrar sin tomar en cuenta la prioridad
+			for p in self.runningPararell:  
+				if not len(p.block)==0: #el proceso bloquea (es 1 o 2)
+					entra = False
+			if entra:
+				if not len(process.block)==0: #si es 1 o 2			
+					#se expropia a todos los procesos tipo 3,4,6,9 y 10 de runningPararell
 					pass
-			else:
-				# No hay procesos usando IO.PANTALLA asi que podemos llegary usarlo
+				#process entra a runningPararell
+			else: 
+				#process pasa a waiting
 				pass
-		else:
-			# =============== Expropiacion  ===============
-			# Ocurre si el proceso que entra USA un IO que esta siendo usado por un proceso que lo NECESITA
-			# El unico IO que puede tener procesos que lo necesiten es IO.PANTALLA
-			if IO.PANTALLA in process.use:
-				if len(self.processIn[IO.PANTALLA]) > 0 :
-					p = self.processIn[IO.PANTALLA][0]
-					if p.need != None:
-						if process.priority < p.priority and len(p.block)==0:
-							# expropiacion:
-							#	1) p pasa a waiting
-							#	2) process pasa a runningPararell
-							#	3) ver si algun waiting entra
+		elif process.getProcessType==7:
+			#Entra a runningPararell
+			pass
+		else: # 5,6,8,9,10
+			#5 y 8: Entra solo si no hay un proceso que necesite la pantalla (6 y 9), a no ser de que tenga mayor prioridad. 
+			#  Expropia en caso de tener mayor prioridad que 6 o 9 y que uno de estos este necesitando la pantalla
+			#6 Entra solo si no hay un proceso que necesite la pantalla (9) a no ser de que tenga mayor prioridad, 
+			#  Expropia a todos los que esten usando la pantalla 
+			#9 Entra solo si no hay un proceso que necesite la pantalla (6) a no ser de que tenga mayor prioridad, ni un proceso que bloquee los audifonos (1 y 2)
+			#  Expropia a todos los que esten usando la pantalla
+			#10 Entra solo si no hay un proceso que necesite la pantalla (6 y 9) a no ser de que tenga mayor prioridad,
+			#  ni un proceso que bloquee los audifonos (1 y 2) No expropia
+			entra = True
+			verificarAudifonos = False
+			if process.getProcessType==9 or process.getProcessType==10: #ver que no esten bloqueados los audifonos
+				verificarAudifonos = True
+			for p in self.runningPararell:
+				if p.needsIO():
+					procesoQueNecesita = p
+				if (verificarAudifonos) and (not len(p.block)==0): #si process es 6 o 9 y hay un proceso 1 o 2 en runningPararell
+					entra = False
+			if entra:
+				if process.getProcessType==6 or process.getProcessType==9:
+					#expropia a todos los procesos tipo 5, 8 y 10 (solo si TODOS tienen menor prioridad) de runningPararell
+					expropiarCount = 0
+					# hay procesos usando pantalla?
+					if len(self.processIn[IO.PANTALLA])>0:
+						# verificar que tenga mejor prioridad que los que estan usando pantalla (o el que este necesitandola)
+						for p in self.processIn[IO.PANTALLA]:
+							if p.priority > process.priority:
+								expropiarCount += 1
+						# ver si es mejor que todos
+						if expropiarCount == len(self.processIn[IO.PANTALLA	]):
+							# expropiamos todos los que usan pantalla
 							pass
-						else:
-							# processs pasa a Waiting
-							pass
-					else:
-						# no hubo expropiacion
-						#	process pasa a runningPararell
-						pass
+				else: #es 5,8,10 verificar su prioridad para ver si expropia a 6 o 9
+					if procesoQueNecesita.priority > process.priority:
+						#expropiar a  procesoQueNecesita
+						pass	
+				#process entra a runningPararell
+			else:
+				#process pasa a waiting
+				pass
 				
 				
 		
