@@ -372,30 +372,10 @@ class Scheduler:
 					if self.running.cortable == True:
 						print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
 			else: #TAREA 2		
-				#ver si existe un proceso con mayor prioridad que running y si es necesario hacer los cambios
-				if len(self.pararellRunning)>0 :#si se esta corriendo un proceso
+				for w in self.waiting:
+					aux= self.waiting.pop()
+					self.addProcess(aux,tarea2)
 					
-						if not self.ready.empty():
-							priority, pid = self.ready.get()
-							if priority < running.getPriority():
-								process = self.loadProcessFromMemory(pid)
-								self.exchange(process)
-							else:
-								self.ready.put((priority,pid))
-						else:
-							pass
-	
-						#VER OTROS CASOS
-	
-						#print 'No hay procesos en cola ready'
-				elif not self.ready.empty(): # self.running es null y tenemos procesos en cola
-					priority, pid = self.ready.get()
-					# cargamos desde Memoria
-					paux=self.loadProcessFromMemory(pid)
-					self.pararellRunning.append(paux) 
-					print 'Ejecutando '+paux.toString() + ' t = ' + str(self.time)
-					if paux.cortable == True:
-						print "Para Cortar el proceso ingrese quit:"+str(paux.pid)			
 			
 	def checkIncomingProc(self,t,tarea2 = None):#MODIFICADO
 		while len(self.incomingProcesses)>0:
