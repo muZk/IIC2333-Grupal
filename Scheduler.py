@@ -26,97 +26,107 @@ class Scheduler:
 		# Necesitamos una lista de procesos corriendo en paralelo
 		self.pararellRunning = list()
 		
+		#Y otra para los que estan en waiting
+		self.waiting = list()
+		
 	def getCurrentTime(self):
 		return self.time
 
-	def addProcess(self, process):
-		self.ready.put((process.priority,process.pid))
-		print 'Agregando ... {}'.format(process.toString())
-		# Agregamos el proceso en memoria:
-		Memory.saveProcess(process)
-		
-	def appendProcess(self,process):
+	def addProcess(self, process ,tarea2 = None): #FALTA IMPLEMENTAR EXPROPIACIONES (Los if que aun tienen PASS)
+		if tarea2==None:#tarea1
+			self.ready.put((process.priority,process.pid))
+			print 'Agregando ... {}'.format(process.toString())
+			# Agregamos el proceso en memoria:
+			Memory.saveProcess(process)
+		else: #tarea2
+			if process.getProcessType() in [1,2,3,4]:
+				#Si es una llamada: (1 y 2)
+				#	Entra solo si no hay algun proceso bloqueando audifonos y microfonos (1)
+				#	Expropia a todos los procesos que esten usando los audifonos y/o microfonos (3,4,6,9 y 10)
+				#Enviar y recibir mensajes: (3 y 4)
+				#	Entra solo si no hay un proceso bloqueando los audifonos (1 y 2)
+				#	No expropia
+				entra = True #variable que es True si el proceso debiese entrar sin tomar en cuenta la prioridad
+				for p in self.pararellRunning:  
+					if not len(p.block)==0: #el proceso bloquea (es 1 o 2)
+						entra = False
+				if entra:
+					if not len(process.block)==0: #si es 1 o 2			
+						#se expropia a todos los procesos tipo 3,4,6,9 y 10 de pararellRunning
+						pass
+					#process entra a pararellRunning
+					self.appendProcess(process)
+				else: 
+					#process pasa a waiting
+					self.waiting.append(process)
+			elif process.getProcessType==7:
+				#Entra a pararellRunning
+				self.appendProcess(process)
+			else: # 5,6,8,9,10
+				#5 y 8: Entra solo si no hay un proceso que necesite la pantalla (6 y 9), a no ser de que tenga mayor prioridad. 
+				#  Expropia en caso de tener mayor prioridad que 6 o 9 y que uno de estos este necesitando la pantalla
+				#6 Entra solo si no hay un proceso que necesite la pantalla (9) a no ser de que tenga mayor prioridad, 
+				#  Expropia a todos los que esten usando la pantalla 
+				#9 Entra solo si no hay un proceso que necesite la pantalla (6) a no ser de que tenga mayor prioridad, ni un proceso que bloquee los audifonos (1 y 2)
+				#  Expropia a todos los que esten usando la pantalla
+				#10 Entra solo si no hay un proceso que necesite la pantalla (6 y 9) a no ser de que tenga mayor prioridad,
+				#  ni un proceso que bloquee los audifonos (1 y 2) No expropia
+				entra = True
+				verificarAudifonos = False
+				if process.getProcessType==9 or process.getProcessType==10: #ver que no esten bloqueados los audifonos
+					verificarAudifonos = True
+				for p in self.pararellRunning:
+					if p.needsIO():
+						procesoQueNecesita = p
+					if (verificarAudifonos) and (not len(p.block)==0): #si process es 6 o 9 y hay un proceso 1 o 2 en pararellRunning
+						entra = False
+				if entra:
+					if process.getProcessType==6 or process.getProcessType==9:
+						#expropia a todos los procesos tipo 5, 8 y 10 (solo si TODOS tienen menor prioridad) de pararellRunning
+						expropiarCount = 0
+						# hay procesos usando pantalla?
+						if len(self.processIn[IO.PANTALLA])>0:
+							# verificar que tenga mejor prioridad que los que estan usando pantalla (o el que este necesitandola)
+							for p in self.processIn[IO.PANTALLA]:
+								if p.priority > process.priority:
+									expropiarCount += 1
+							# ver si es mejor que todos
+							if expropiarCount == len(self.processIn[IO.PANTALLA	]):
+								# expropiamos todos los que usan pantalla
+								pass
+					else: #es 5,8,10 verificar su prioridad para ver si expropia a 6 o 9
+						if procesoQueNecesita.priority > process.priority:
+							#expropiar a  procesoQueNecesita
+							pass	
+					#process entra a pararellRunning
+					self.appendProcess(process)
+				else:
+					#process pasa a waiting
+					self.waiting.append(process)
+				
+	def appendProcess(self,process):#MODIFICADO
 		# pasó todos los malditos filtros, ahora puede correr tranquilamente
 		for io in process.use:
 			self.processIn[io].append(process)
 		# agregamos a la running
+		print 'Agregando ... {}'.format(process.toString())
 		self.pararellRunning.append(process)
 		# guardamos en memoria... aunque como lo tamos haciendo ya no es necesario
 		Memory.saveProcess(process)
 		
-	def addProcess2(self,process): #FALTA implementar los if
-		if process.getProcessType() in [1,2,3,4]:
-			#Si es una llamada: (1 y 2)
-			#	Entra solo si no hay algun proceso bloqueando audifonos y microfonos (1)
-			#	Expropia a todos los procesos que esten usando los audifonos y/o microfonos (3,4,6,9 y 10)
-			#Enviar y recibir mensajes: (3 y 4)
-			#	Entra solo si no hay un proceso bloqueando los audifonos (1 y 2)
-			#	No expropia
-			entra = True #variable que es True si el proceso debiese entrar sin tomar en cuenta la prioridad
-			for p in self.runningPararell:  
-				if not len(p.block)==0: #el proceso bloquea (es 1 o 2)
-					entra = False
-			if entra:
-				if not len(process.block)==0: #si es 1 o 2			
-					#se expropia a todos los procesos tipo 3,4,6,9 y 10 de runningPararell
-					pass
-				#process entra a runningPararell
-			else: 
-				#process pasa a waiting
-				pass
-		elif process.getProcessType==7:
-			#Entra a runningPararell
+	def removeProcess(self,process,tarea2 = None): #MODIFICAR
+		if tarea2 == None:
+			# Removemos un proceso
+			Memory.removeProcess(process.pid)
+			if self.running == process:
+				self.running = None
+		else:#tarea2
+			###############
+			##IMPLEMENTAR##
+			###############
 			pass
-		else: # 5,6,8,9,10
-			#5 y 8: Entra solo si no hay un proceso que necesite la pantalla (6 y 9), a no ser de que tenga mayor prioridad. 
-			#  Expropia en caso de tener mayor prioridad que 6 o 9 y que uno de estos este necesitando la pantalla
-			#6 Entra solo si no hay un proceso que necesite la pantalla (9) a no ser de que tenga mayor prioridad, 
-			#  Expropia a todos los que esten usando la pantalla 
-			#9 Entra solo si no hay un proceso que necesite la pantalla (6) a no ser de que tenga mayor prioridad, ni un proceso que bloquee los audifonos (1 y 2)
-			#  Expropia a todos los que esten usando la pantalla
-			#10 Entra solo si no hay un proceso que necesite la pantalla (6 y 9) a no ser de que tenga mayor prioridad,
-			#  ni un proceso que bloquee los audifonos (1 y 2) No expropia
-			entra = True
-			verificarAudifonos = False
-			if process.getProcessType==9 or process.getProcessType==10: #ver que no esten bloqueados los audifonos
-				verificarAudifonos = True
-			for p in self.runningPararell:
-				if p.needsIO():
-					procesoQueNecesita = p
-				if (verificarAudifonos) and (not len(p.block)==0): #si process es 6 o 9 y hay un proceso 1 o 2 en runningPararell
-					entra = False
-			if entra:
-				if process.getProcessType==6 or process.getProcessType==9:
-					#expropia a todos los procesos tipo 5, 8 y 10 (solo si TODOS tienen menor prioridad) de runningPararell
-					expropiarCount = 0
-					# hay procesos usando pantalla?
-					if len(self.processIn[IO.PANTALLA])>0:
-						# verificar que tenga mejor prioridad que los que estan usando pantalla (o el que este necesitandola)
-						for p in self.processIn[IO.PANTALLA]:
-							if p.priority > process.priority:
-								expropiarCount += 1
-						# ver si es mejor que todos
-						if expropiarCount == len(self.processIn[IO.PANTALLA	]):
-							# expropiamos todos los que usan pantalla
-							pass
-				else: #es 5,8,10 verificar su prioridad para ver si expropia a 6 o 9
-					if procesoQueNecesita.priority > process.priority:
-						#expropiar a  procesoQueNecesita
-						pass	
-				#process entra a runningPararell
-			else:
-				#process pasa a waiting
-				pass
 				
-				
-		
-	def removeProcess(self,process):
-		# Removemos un proceso
-		Memory.removeProcess(process.pid)
-		if self.running == process:
-			self.running = None
-			
-	def loadProcessFromString(self,line,cor=True):
+	def loadProcessFromString(self,line,cor=True, tarea2 = None): #MODIFICADO
 		atr = line.split(';')
 		otros = list()
 		for i in range(4, len(atr)):
@@ -127,7 +137,10 @@ class Scheduler:
 		else:
 			cortar = False
 		p = Process.Process(self.IdCounter,atr[0],atr[1],atr[2],atr[3],otros,cortar) 
-		self.addProcess(p)
+		if tarea2==None: #tarea1
+			self.addProcess(p)
+		else:#tarea2
+			self.addProcess(p, tarea2)
 		#self.incomingProcesses.append(p)
 		self.IdCounter=self.IdCounter+1
 		#self.incomingProcesses.sort(key = lambda Process: -Process.execution_date) #ordeno por orden de llegada
@@ -152,59 +165,95 @@ class Scheduler:
 	def readProcessFromMemory(self,pid):
 		return Memory.readProcess(pid)
 
-	def priorityScheduler(self):
+	def priorityScheduler(self, tarea2 = None): #MODIFICADO #Tarea 2 solo tendra un valor si se esta ejecutando la tarea 2 (ver Main)
 		while self.ejecutandose:
-			#Revisar si llega alguien en el tiempo time y meterlo a la cola de prioridades
-			self.checkIncomingProc(self.time)
-			#Si se acabo el proceso actual hacer cambios
-			self.checkIfFinished()
-			#Hacer cambios si existe un proceso con mayor prioridad a running
-			self.checkPriorities()
-			#Aumentar contador de segundos
-			self.clock()
-	
-	def checkIfFinished(self):
-		if self.running is not None:
-			real_time_left = self.running.getTimeLeft() - self.runningTime;
-			#print 'checkIfFinished - pid '+str(self.running.pid)+' prioridad: '+str(self.running.priority)+' timeLeft: ' + str(real_time_left)
-			if real_time_left<=0:
-				self.registerLog()
-				self.endProcess()
-
-	def checkIfFinished2(self):
-		if not self.pararellRunning.empty():
-			for running in self.pararellRunning:
-
-				real_time_left = running.getTimeLeft() - self.runningTime;
+			if tarea2 == None : #ejecutar tarea1
+				#Revisar si llega alguien en el tiempo time y meterlo a la cola de prioridades
+				self.checkIncomingProc(self.time) 
+				#Si se acabo el proceso actual hacer cambios
+				self.checkIfFinished()
+				#Hacer cambios si existe un proceso con mayor prioridad a running
+				self.checkPriorities()
+				#Aumentar contador de segundos
+				self.clock()
+			else: #ejecutar Tarea 2
+				#Revisar si llega alguien en el tiempo time y meterlo a waiting o pararellRunning
+				self.checkIncomingProc(self.time, tarea2) 
+				#Si se acabo algun proceso hacer cambios
+				self.checkIfFinished(tarea2)
+				#Hacer cambios si existe un proceso en waiting que pueda entrar
+				self.checkPriorities(tarea2) #IMPLEMENTAR, OJO QUE YA NO HAY READY, SINO QUE WAITING
+				#Aumentar contador de segundos
+				self.clock(tarea2)
+				
+	def checkIfFinished(self, tarea2 = None):#MODIFICADO
+		if tarea2 == None: #tarea1
+			if self.running is not None:
+				real_time_left = self.running.getTimeLeft() - self.runningTime;
 				#print 'checkIfFinished - pid '+str(self.running.pid)+' prioridad: '+str(self.running.priority)+' timeLeft: ' + str(real_time_left)
 				if real_time_left<=0:
-					self.registerLog()#MODIFICAR
-					self.endProcess()#MODIFICAR
+					self.registerLog()
+					self.endProcess()
+		else: #tarea2
+			if not self.pararellRunning.empty():
+				for running in self.pararellRunning:
+					real_time_left = running.getTimeLeft() - self.runningTime;
+					#print 'checkIfFinished - pid '+str(self.running.pid)+' prioridad: '+str(self.running.priority)+' timeLeft: ' + str(real_time_left)
+					if real_time_left<=0:
+						self.registerLog(running)
+						self.endProcess(running)#Implementar
 
-	def registerLog(self):
-		if self.running.getProcessType()==1 or self.running.getProcessType()==2:#si es llamar o recibir llamada registrar en historial
-			self.registerCalls()
-		elif self.running.getProcessType()==3 or self.running.getProcessType()==4:#si es envio  o recibo de mensajes registrar en mensajes
-			self.registerSMS()
-		elif self.running.getProcessType()==5 or self.running.getProcessType()==7: #agregar contactos registrar en agenda
-			self.addContact()
-	
-	def addContact(self):#guardo contactos formato Nombre;Numero
-		f=open("Contactos.txt", "a")
-		line=str(self.running.getOtros()[0])+";"+str(self.running.getOtros()[1])
-		f.write(line)
-			
-	def registerSMS(self):#guardo SMS formato >(si es enviado)<(si es recibido);Numero;Fecha;Texto
-		f=open("Mensajes.txt", "a")
-		date = datetime.datetime.now()
-		if self.running.getProcessType()==3:
-			tipo = ">;"
-		else:
-			tipo = "<;"
-		line = str(tipo)+str(self.running.getOtros()[0]) + ";" + str(date) + ";" + str(self.running.runningTime) + "\n"
-		f.write(line)
-	
-	def registerCalls(self):#guardo llamadas formato >(si es enviada)<(si es recibida);Numero;Fecha;Duracion
+	def registerLog(self, p=None):#MODIFICADO
+		if p == None: #registerLog para Tarea1
+			if self.running.getProcessType()==1 or self.running.getProcessType()==2:#si es llamar o recibir llamada registrar en historial
+				self.registerCalls()
+			elif self.running.getProcessType()==3 or self.running.getProcessType()==4:#si es envio  o recibo de mensajes registrar en mensajes
+				self.registerSMS()
+			elif self.running.getProcessType()==5 or self.running.getProcessType()==7: #agregar contactos registrar en agenda
+				self.addContact()
+		else: #registerLog para Tarea2
+			if p.getProcessType()==1 or p.getProcessType()==2:#si es llamar o recibir llamada registrar en historial
+				self.registerCalls(p)
+			elif p.getProcessType()==3 or p.getProcessType()==4:#si es envio  o recibo de mensajes registrar en mensajes
+				self.registerSMS(p)
+			elif p.getProcessType()==5 or p.getProcessType()==7: #agregar contactos registrar en agenda
+				self.addContact(p)
+				
+	def addContact(self, p = None):#MODIFICADO
+		#guardo contactos formato Nombre;Numero
+		if p == None: #addContact para Tarea1
+			f=open("Contactos.txt", "a")
+			line=str(self.running.getOtros()[0])+";"+str(self.running.getOtros()[1])
+			f.write(line)
+		else: #addContact para Tarea2
+			f=open("Contactos.txt", "a")
+			line=str(p.getOtros()[0])+";"+str(p.getOtros()[1])
+			f.write(line)
+				
+	def registerSMS(self, p = None):#MODIFICADO
+		#guardo SMS formato >(si es enviado)<(si es recibido);Numero;Fecha;Texto
+		if p == None: #registerSMS Tarea1
+			f=open("Mensajes.txt", "a")
+			date = datetime.datetime.now()
+			if self.running.getProcessType()==3:
+				tipo = ">;"
+			else:
+				tipo = "<;"
+			line = str(tipo)+str(self.running.getOtros()[0]) + ";" + str(date) + ";" + str(self.running.runningTime) + "\n"
+			f.write(line)
+		else: #registerSMS Tarea2
+			f=open("Mensajes.txt", "a")
+			date = datetime.datetime.now()
+			if p.getProcessType()==3:
+				tipo = ">;"
+			else:
+				tipo = "<;"
+			line = str(tipo)+str(p.getOtros()[0]) + ";" + str(date) + ";" + str(p.runningTime) + "\n"
+			f.write(line)
+
+	def registerCalls(self, p = None):#MODIFICADO
+		#guardo llamadas formato >(si es enviada)<(si es recibida);Numero;Fecha;Duracion
+		if p == None: #registerCalls para Tarea1
 			f=open("Historial.txt", "a")
 			date = datetime.datetime.now()
 			if self.running.getProcessType()==1:
@@ -213,120 +262,156 @@ class Scheduler:
 				tipo = "<;"
 			line = str(tipo)+str(self.running.getOtros()[0]) + ";" + str(date) + ";" + str(self.running.runningTime) + "\n"
 			f.write(line)
-	
-	def exchange(self,process):
-		print 'Expropiacion de '+self.running.toString()+' por '+process.toString();
-		self.running.setTimeLeft(self.runningTime)
-		self.runningTime=0
-		paux = self.running
-		self.running = process
-		if self.running.cortable == True:
-			print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
-		self.addProcess(paux)
-	
-	def endProcess(self):
-		print 'Finalizando '+self.running.toString()
-		self.removeProcess(self.running) # removemos el proceso running de memoria
-		self.runningTime = 0
-		if not self.ready.empty():
-			priority, pid = self.ready.get()
-			self.running = self.loadProcessFromMemory(pid) # nuevo proceso entra
-			print "Ejecutando "+self.running.toString()+" t = "+str(self.time)
+		else: #registerCalls para tarea 2
+			f=open("Historial.txt", "a")
+			date = datetime.datetime.now()
+			if self.running.getProcessType()==1:
+				tipo = ">;"
+			else:
+				tipo = "<;"
+			line = str(tipo)+str(self.running.getOtros()[0]) + ";" + str(date) + ";" + str(self.running.runningTime) + "\n"
+			f.write(line)
+			
+	def exchange(self,process,tarea2 = None):#MODIFICAR
+		if tarea2 == None: #Tarea1
+			print 'Expropiacion de '+self.running.toString()+' por '+process.toString();
+			self.running.setTimeLeft(self.runningTime)
+			self.runningTime=0
+			paux = self.running
+			self.running = process
 			if self.running.cortable == True:
 				print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
-		else:
-			#print 'No hay procesos en cola ready'
+			self.addProcess(paux)
+		else:#tarea2
+			###############
+			##IMPLEMENTAR##
+			###############
 			pass
+		
+	def endProcess(self, process = None): #MODIFICAR 
+		if process == None: #Tarea1
+			print 'Finalizando '+self.running.toString()
+			self.removeProcess(self.running) # removemos el proceso running de memoria
+			self.runningTime = 0
+			if not self.ready.empty():
+				priority, pid = self.ready.get()
+				self.running = self.loadProcessFromMemory(pid) # nuevo proceso entra
+				print "Ejecutando "+self.running.toString()+" t = "+str(self.time)
+				if self.running.cortable == True:
+					print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
+			else:
+				#print 'No hay procesos en cola ready'
+				pass
+		else: #Tarea2
+			################
+			##IMPLEMENTAR###
+			################
+			pass
+		
+	def endProcessByConsole(self,pid_ask, tarea2=None): #MODIFICAR
+		if tarea2 == None: #tarea1
+			if pid_ask==self.running.pid:
+				self.running.setTimeLeft(self.running.getTimeLeft())
+				#print 'Finalizando proceso '+self.running.toString()
+			else :
+				print "Su proceso está en cola o ya fue ejecutado"
+		else: #tarea2
+			###############
+			##IMPLEMENTAR##
+			###############
+			pass
+
+	def checkPriorities(self, tarea2 = None):#MODIFICAR OJO QUE YA NO HAY READY, SINO QUE WAITING
+			if tarea2 == None: #tarea1
+				#ver si existe un proceso con mayor prioridad que running y si es necesario hacer los cambios
+				if self.running is not None:#si se esta corriendo un proceso
+					if not self.ready.empty():
+						priority, pid = self.ready.get()
+						if priority < self.running.getPriority():
+							process = self.loadProcessFromMemory(pid)
+							self.exchange(process)
+						else:
+							self.ready.put((priority,pid))
+					else:
+						pass
+						#print 'No hay procesos en cola ready'
+				elif not self.ready.empty(): # self.running es null y tenemos procesos en cola
+					priority, pid = self.ready.get()
+					# cargamos desde Memoria
+					self.running = self.loadProcessFromMemory(pid)
+					print 'Ejecutando '+self.running.toString() + ' t = ' + str(self.time)
+					if self.running.cortable == True:
+						print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
+			else: #TAREA 2		
+				#ver si existe un proceso con mayor prioridad que running y si es necesario hacer los cambios
+				if not self.pararellRunning.empty():#si se esta corriendo un proceso
+					for running in self.pararellRunning:
+						if not self.ready.empty():
+							priority, pid = self.ready.get()
+							if priority < running.getPriority():
+								process = self.loadProcessFromMemory(pid)
+								self.exchange(process)
+							else:
+								self.ready.put((priority,pid))
+						else:
+							pass
 	
-	def endProcessByConsole(self,pid_ask):
-		if pid_ask==self.running.pid:
-			self.running.setTimeLeft(self.running.getTimeLeft())
-			#print 'Finalizando proceso '+self.running.toString()
-		else :
-			print "Su proceso está en cola o ya fue ejecutado"
-
-	def checkPriorities(self):
-			#ver si existe un proceso con mayor prioridad que running y si es necesario hacer los cambios
-			if self.running is not None:#si se esta corriendo un proceso
-				if not self.ready.empty():
+						#VER OTROS CASOS
+	
+						#print 'No hay procesos en cola ready'
+				elif not self.ready.empty(): # self.running es null y tenemos procesos en cola
 					priority, pid = self.ready.get()
-					if priority < self.running.getPriority():
-						process = self.loadProcessFromMemory(pid)
-						self.exchange(process)
-					else:
-						self.ready.put((priority,pid))
-				else:
-					pass
-					#print 'No hay procesos en cola ready'
-			elif not self.ready.empty(): # self.running es null y tenemos procesos en cola
-				priority, pid = self.ready.get()
-				# cargamos desde Memoria
-				self.running = self.loadProcessFromMemory(pid)
-				print 'Ejecutando '+self.running.toString() + ' t = ' + str(self.time)
-				if self.running.cortable == True:
-					print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
-	def checkPriorities2(self):
-			#ver si existe un proceso con mayor prioridad que running y si es necesario hacer los cambios
-			if not self.pararellRunning.empty():#si se esta corriendo un proceso
-				for running in self.pararellRunning
-				if not self.ready.empty():
-					priority, pid = self.ready.get()
-					if priority < running.getPriority():
-						process = self.loadProcessFromMemory(pid)
-						self.exchange(process)
-					else:
-						self.ready.put((priority,pid))
-				else:
-					pass
-
-					#VER OTROS CASOS
-
-					#print 'No hay procesos en cola ready'
-			elif not self.ready.empty(): # self.running es null y tenemos procesos en cola
-				priority, pid = self.ready.get()
-				# cargamos desde Memoria
-				self.running = self.loadProcessFromMemory(pid)
-				print 'Ejecutando '+self.running.toString() + ' t = ' + str(self.time)
-				if self.running.cortable == True:
-					print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
+					# cargamos desde Memoria
+					self.running = self.loadProcessFromMemory(pid)
+					print 'Ejecutando '+self.running.toString() + ' t = ' + str(self.time)
+					if self.running.cortable == True:
+						print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)			
 			
-	def checkIncomingProc(self,t):
+	def checkIncomingProc(self,t,tarea2 = None):#MODIFICADO
 		while len(self.incomingProcesses)>0:
 			#print 'checkIncomingProc '+str(self.incomingProcesses[-1].getExecutionDate())
 			if self.incomingProcesses[-1].getExecutionDate()==t:
-				self.addProcess2(self.incomingProcesses.pop())
+				if tarea2 == None: #tarea1
+					self.addProcess(self.incomingProcesses.pop())
+				else: #tarea2
+					self.addProcess(self.incomingProcesses.pop(), tarea2)
+					
+	def showActiveProcess(self, tarea2 = None): #MODIFICAR
+		if tarea2 == None: #tarea1
+			# running
+			print "------------------------------"
+			if self.running is not None:
+				print "Running:\npid = "+ str(self.running.pid) +" name = "+str(self.running.name)
 			else:
-				break
-	def showActiveProcess(self):
-		# running
-		print "------------------------------"
-		if self.running is not None:
-			print "Running:\npid = "+ str(self.running.pid) +" name = "+str(self.running.name)
-		else:
-			print "No hay procesos en running"	
-		# ready
-		if not self.ready.empty():
-			print 'Ready:'
-			for p in self.ready.queue:
-				pid = p[1]
-				process = self.readProcessFromMemory(pid)
-				if process is not None: # por si las moscas!
-					print "pid = "+str(process.pid)+" name = "+ process.name
-		else:
-			print "No hay procesos en Ready"
-		print "------------------------------"
-
-	def clock(self):
-		self.time = self.time + 1
-		if self.running is not None:
-			self.runningTime = self.runningTime + 1	
-			self.running.runningTime = self.running.runningTime+1				
-		time.sleep(1)
-
-	def clock2(self):
-		self.time = self.time + 1
-		if not self.pararellRunning.empty():
-			for running in self.pararellRunning:
+				print "No hay procesos en running"	
+			# ready
+			if not self.ready.empty():
+				print 'Ready:'
+				for p in self.ready.queue:
+					pid = p[1]
+					process = self.readProcessFromMemory(pid)
+					if process is not None: # por si las moscas!
+						print "pid = "+str(process.pid)+" name = "+ process.name
+			else:
+				print "No hay procesos en Ready"
+			print "------------------------------"
+		else: #tarea2
+			###############
+			##IMPLEMENTAR##
+			###############
+			pass
+		
+	def clock(self, tarea2 = None):#MODIFICADO
+		if tarea2 == None: #tarea1
+			self.time = self.time + 1
+			if self.running is not None:
 				self.runningTime = self.runningTime + 1	
-				running.runningTime = running.runningTime+1				
-		time.sleep(1)
+				self.running.runningTime = self.running.runningTime+1				
+			time.sleep(1)
+		else: #tarea2
+			self.time = self.time + 1
+			if not self.pararellRunning.empty():
+				for running in self.pararellRunning:
+					self.runningTime = self.runningTime + 1	
+					running.runningTime = running.runningTime+1				
+			time.sleep(1)	
