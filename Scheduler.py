@@ -114,17 +114,21 @@ class Scheduler:
 		# guardamos en memoria... aunque como lo tamos haciendo ya no es necesario
 		Memory.saveProcess(process)
 		
-	def removeProcess(self,process,tarea2 = None): #MODIFICAR
+	def removeProcess(self,process,tarea2 = None): #MODIFICADO
 		if tarea2 == None:
 			# Removemos un proceso
 			Memory.removeProcess(process.pid)
 			if self.running == process:
 				self.running = None
 		else:#tarea2
-			###############
-			##IMPLEMENTAR##
-			###############
-			pass
+			# no necesario pero igual
+			Memory.removeProcess(process.pid)
+			# remover de pararellRunning
+			self.pararellRunning.remove(process)
+			# remover de cada IO
+			for io in range(0,6):
+				if process in self.processIn[io]:
+					self.processIn[io].remove(process)
 				
 	def loadProcessFromString(self,line,cor=True, tarea2 = None): #MODIFICADO
 		atr = line.split(';')
@@ -308,7 +312,7 @@ class Scheduler:
 			################
 			pass
 		
-	def endProcessByConsole(self,pid_ask, tarea2=None): #MODIFICAR
+	def endProcessByConsole(self,pid_ask, tarea2=None): #MODIFICADO
 		if tarea2 == None: #tarea1
 			if pid_ask==self.running.pid:
 				self.running.setTimeLeft(self.running.getTimeLeft())
@@ -316,10 +320,14 @@ class Scheduler:
 			else :
 				print "Su proceso está en cola o ya fue ejecutado"
 		else: #tarea2
-			###############
-			##IMPLEMENTAR##
-			###############
-			pass
+			process = None
+			for p in self.pararellRunning:
+				if p.pid == pid_ask:
+					process = p
+			if process != None:
+				process.setTimeLeft(process.getTimeLeft())
+			else:
+				print "Su proceso está en Waiting o ya fue ejecutado"
 
 	def checkPriorities(self, tarea2 = None):#MODIFICAR OJO QUE YA NO HAY READY, SINO QUE WAITING
 			if tarea2 == None: #tarea1
@@ -344,7 +352,7 @@ class Scheduler:
 						print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
 			else: #TAREA 2		
 				#ver si existe un proceso con mayor prioridad que running y si es necesario hacer los cambios
-				if not self.pararellRunning.empty():#si se esta corriendo un proceso
+				if len(self.pararellRunning)>0 :#si se esta corriendo un proceso
 					for running in self.pararellRunning:
 						if not self.ready.empty():
 							priority, pid = self.ready.get()
@@ -376,7 +384,7 @@ class Scheduler:
 				else: #tarea2
 					self.addProcess(self.incomingProcesses.pop(), tarea2)
 					
-	def showActiveProcess(self, tarea2 = None): #MODIFICAR
+	def showActiveProcess(self, tarea2 = None): #MODIFICADO
 		if tarea2 == None: #tarea1
 			# running
 			print "------------------------------"
@@ -396,10 +404,22 @@ class Scheduler:
 				print "No hay procesos en Ready"
 			print "------------------------------"
 		else: #tarea2
-			###############
-			##IMPLEMENTAR##
-			###############
-			pass
+			
+			print "------------------------------"
+			
+			if len(self.pararellRunning)>0 :
+				print "Procesos corriendo:"
+				for p in self.pararellRunning:
+					print "pid = "+str(p.pid) + " name = "+str(p.name)
+			
+			else:
+				print "No hay procesos corriendo"
+				
+			if len(self.waiting)>0 :
+				print "Procesos en waiting:"
+				for p in self.waiting:
+					print "pid = "+str(p.pid) + " name = "+str(p.name)
+
 		
 	def clock(self, tarea2 = None):#MODIFICADO
 		if tarea2 == None: #tarea1
