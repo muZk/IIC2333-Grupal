@@ -117,6 +117,8 @@ class Scheduler:
 		# agregamos a la running
 		print 'Agregando ... {}'.format(process.toString())
 		self.pararellRunning.append(process)
+		if process.cortable == True:
+			print "Para Cortar el proceso ingrese quit:"+str(process.pid)	
 		# guardamos en memoria... aunque como lo tamos haciendo ya no es necesario
 		Memory.saveProcess(process)
 		
@@ -282,7 +284,7 @@ class Scheduler:
 			line = str(tipo)+str(self.running.getOtros()[0]) + ";" + str(date) + ";" + str(self.running.runningTime) + "\n"
 			f.write(line)
 			
-	def exchange(self,process,tarea2 = None, usan = None):#MODIFICANDO
+	def exchange(self,process,tarea2 = None, usan = None):#MODIFICADO
 		if tarea2 == None: #Tarea1
 			print 'Expropiacion de '+self.running.toString()+' por '+process.toString();
 			self.running.setTimeLeft(self.runningTime)
@@ -301,9 +303,7 @@ class Scheduler:
 						self.runningTime=0
 						paux = p
 						self.addProcess(paux,tarea2)
-				#self.pararellRunning.append(process) ESTO YA ESTA HECHO EN ADDPROCESS
-				if process.cortable == True:
-					print "Para Cortar el proceso ingrese quit:"+str(process.pid)		
+				#self.pararellRunning.append(process) ESTO YA ESTA HECHO EN ADDPROCESS	
 			elif process.pid==6 or process.pid==9: #EXPROPIA AL QUE USA O NECESITA
 				if not usan == None:
 					for p in self.pararellRunning:
@@ -322,8 +322,6 @@ class Scheduler:
 							self.runningTime=0
 							paux = p
 							self.addProcess(paux,tarea2)
-				if process.cortable == True:
-					print "Para Cortar el proceso ingrese quit:"+str(process.pid)
 			elif process.getProcessType() in [5,8,10]: #EXPROPIA A EL QUE NECESITA 
 				for p in self.pararellRunning:
 					if p.getProcessType in [6,9]: #NECESITA
@@ -332,10 +330,8 @@ class Scheduler:
 						self.runningTime=0
 						paux = p
 						self.addProcess(paux,tarea2)
-				if process.cortable == True:
-					print "Para Cortar el proceso ingrese quit:"+str(process.pid)
 			
-	def endProcess(self, process = None): #MODIFICAR 
+	def endProcess(self, process = None): #MODIFICADO 
 		if process == None: #Tarea1
 			print 'Finalizando '+self.running.toString()
 			self.removeProcess(self.running) # removemos el proceso running de memoria
@@ -346,14 +342,19 @@ class Scheduler:
 				print "Ejecutando "+self.running.toString()+" t = "+str(self.time)
 				if self.running.cortable == True:
 					print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
-			else:
-				#print 'No hay procesos en cola ready'
-				pass
 		else: #Tarea2
-			################
-			##IMPLEMENTAR###
-			################
-			pass
+			for p in self.pararellRunning:
+				if p.pid == process.pid:
+					proceso = p
+			print 'Finalizando '+proceso.toString()
+			self.removeProcess(proceso) # removemos el proceso running de memoria
+			self.runningTime = 0
+			"""if not self.ready.empty():
+				priority, pid = self.ready.get()
+				self.running = self.loadProcessFromMemory(pid) # nuevo proceso entra
+				print "Ejecutando "+self.running.toString()+" t = "+str(self.time)
+				if self.running.cortable == True:
+					print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)"""
 		
 	def endProcessByConsole(self,pid_ask, tarea2=None): #MODIFICADO
 		if tarea2 == None: #tarea1
@@ -372,7 +373,7 @@ class Scheduler:
 			else:
 				print "Su proceso está en Waiting o ya fue ejecutado"
 
-	def checkPriorities(self, tarea2 = None):#MODIFICAR OJO QUE YA NO HAY READY, SINO QUE WAITING
+	def checkPriorities(self, tarea2 = None):#MODIFICADO
 			if tarea2 == None: #tarea1
 				#ver si existe un proceso con mayor prioridad que running y si es necesario hacer los cambios
 				if self.running is not None:#si se esta corriendo un proceso
@@ -396,7 +397,7 @@ class Scheduler:
 			else: #TAREA 2		
 				i=0		
 				k=len(self.waiting)
-				while i<k
+				while i<k:
 					aux= self.waiting.pop(0)
 					self.addProcess(aux,tarea2)
 					i=i+1
