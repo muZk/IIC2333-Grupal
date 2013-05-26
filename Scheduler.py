@@ -171,6 +171,16 @@ class Scheduler:
 				self.registerLog()
 				self.endProcess()
 
+	def checkIfFinished2(self):
+		if not self.pararellRunning.empty():
+			for running in self.pararellRunning:
+
+				real_time_left = running.getTimeLeft() - self.runningTime;
+				#print 'checkIfFinished - pid '+str(self.running.pid)+' prioridad: '+str(self.running.priority)+' timeLeft: ' + str(real_time_left)
+				if real_time_left<=0:
+					self.registerLog()#MODIFICAR
+					self.endProcess()#MODIFICAR
+
 	def registerLog(self):
 		if self.running.getProcessType()==1 or self.running.getProcessType()==2:#si es llamar o recibir llamada registrar en historial
 			self.registerCalls()
@@ -255,12 +265,36 @@ class Scheduler:
 				print 'Ejecutando '+self.running.toString() + ' t = ' + str(self.time)
 				if self.running.cortable == True:
 					print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
+	def checkPriorities2(self):
+			#ver si existe un proceso con mayor prioridad que running y si es necesario hacer los cambios
+			if not self.pararellRunning.empty():#si se esta corriendo un proceso
+				for running in self.pararellRunning
+				if not self.ready.empty():
+					priority, pid = self.ready.get()
+					if priority < running.getPriority():
+						process = self.loadProcessFromMemory(pid)
+						self.exchange(process)
+					else:
+						self.ready.put((priority,pid))
+				else:
+					pass
+
+					#VER OTROS CASOS
+
+					#print 'No hay procesos en cola ready'
+			elif not self.ready.empty(): # self.running es null y tenemos procesos en cola
+				priority, pid = self.ready.get()
+				# cargamos desde Memoria
+				self.running = self.loadProcessFromMemory(pid)
+				print 'Ejecutando '+self.running.toString() + ' t = ' + str(self.time)
+				if self.running.cortable == True:
+					print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
 			
 	def checkIncomingProc(self,t):
 		while len(self.incomingProcesses)>0:
 			#print 'checkIncomingProc '+str(self.incomingProcesses[-1].getExecutionDate())
 			if self.incomingProcesses[-1].getExecutionDate()==t:
-				self.addProcess(self.incomingProcesses.pop())
+				self.addProcess2(self.incomingProcesses.pop())
 			else:
 				break
 	def showActiveProcess(self):
@@ -287,4 +321,12 @@ class Scheduler:
 		if self.running is not None:
 			self.runningTime = self.runningTime + 1	
 			self.running.runningTime = self.running.runningTime+1				
+		time.sleep(1)
+
+	def clock2(self):
+		self.time = self.time + 1
+		if not self.pararellRunning.empty():
+			for running in self.pararellRunning:
+				self.runningTime = self.runningTime + 1	
+				running.runningTime = running.runningTime+1				
 		time.sleep(1)
