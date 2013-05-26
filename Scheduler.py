@@ -286,11 +286,32 @@ class Scheduler:
 			if self.running.cortable == True:
 				print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
 			self.addProcess(paux)
-		else:#tarea2
-			###############
-			##IMPLEMENTAR##
-			###############
-			pass
+		else:
+			if process.pid==1 or process.pid==2
+				for p in self.pararellRunning
+					if p.use.count(IO.MICROFONO)>0 or p.use.count(IO.AUDIFONO)>0
+						print 'Expropiacion de '+p.toString()+' por '+process.toString();
+			            p.setTimeLeft(self.runningTime)
+			            self.runningTime=0
+						paux = p
+						
+						self.addProcess(paux,tarea2)
+				self.pararellRunning.append(process)
+				if process.cortable == True:
+				print "Para Cortar el proceso ingrese quit:"+str(process.pid)		
+			
+			elif process.pid==6 or process.pid==9
+				for p in self.pararellRunning
+					if p.use.count(IO.PANTALLA)>0 
+						print 'Expropiacion de '+p.toString()+' por '+process.toString();
+			            p.setTimeLeft(self.runningTime)
+			            self.runningTime=0
+						paux = p
+						self.addProcess(paux,tarea2)
+				self.pararellRunning.append(process)
+				if process.cortable == True:
+				print "Para Cortar el proceso ingrese quit:"+str(process.pid)
+			
 		
 	def endProcess(self, process = None): #MODIFICAR 
 		if process == None: #Tarea1
@@ -353,7 +374,7 @@ class Scheduler:
 			else: #TAREA 2		
 				#ver si existe un proceso con mayor prioridad que running y si es necesario hacer los cambios
 				if len(self.pararellRunning)>0 :#si se esta corriendo un proceso
-					for running in self.pararellRunning:
+					
 						if not self.ready.empty():
 							priority, pid = self.ready.get()
 							if priority < running.getPriority():
@@ -370,10 +391,11 @@ class Scheduler:
 				elif not self.ready.empty(): # self.running es null y tenemos procesos en cola
 					priority, pid = self.ready.get()
 					# cargamos desde Memoria
-					self.running = self.loadProcessFromMemory(pid)
-					print 'Ejecutando '+self.running.toString() + ' t = ' + str(self.time)
-					if self.running.cortable == True:
-						print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)			
+					paux=self.loadProcessFromMemory(pid)
+					self.pararellRunning.append(paux) 
+					print 'Ejecutando '+paux.toString() + ' t = ' + str(self.time)
+					if paux.cortable == True:
+						print "Para Cortar el proceso ingrese quit:"+str(paux.pid)			
 			
 	def checkIncomingProc(self,t,tarea2 = None):#MODIFICADO
 		while len(self.incomingProcesses)>0:
