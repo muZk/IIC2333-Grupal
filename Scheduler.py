@@ -394,9 +394,12 @@ class Scheduler:
 					if self.running.cortable == True:
 						print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
 			else: #TAREA 2		
-				for w in self.waiting:
-					aux= self.waiting.pop()
+				i=0		
+				k=len(self.waiting)
+				while i<k
+					aux= self.waiting.pop(0)
 					self.addProcess(aux,tarea2)
+					i=i+1
 					
 			
 	def checkIncomingProc(self,t,tarea2 = None):#MODIFICADO
