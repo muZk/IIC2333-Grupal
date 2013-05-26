@@ -53,36 +53,36 @@ class Scheduler:
 				if entra:
 					if not len(process.block)==0: #si es 1 o 2			
 						#se expropia a todos los procesos tipo 3,4,6,9 y 10 de pararellRunning
-						pass
+						self.exchange(process,tarea2)
 					#process entra a pararellRunning
 					self.appendProcess(process)
 				else: 
 					#process pasa a waiting
 					self.waiting.append(process)
-			elif process.getProcessType==7:
+			elif process.getProcessType()==7:
 				#Entra a pararellRunning
 				self.appendProcess(process)
 			else: # 5,6,8,9,10
 				#5 y 8: Entra solo si no hay un proceso que necesite la pantalla (6 y 9), a no ser de que tenga mayor prioridad. 
 				#  Expropia en caso de tener mayor prioridad que 6 o 9 y que uno de estos este necesitando la pantalla
 				#6 Entra solo si no hay un proceso que necesite la pantalla (9) a no ser de que tenga mayor prioridad, 
-				#  Expropia a todos los que esten usando la pantalla 
+				#  Expropia a todos los que esten usando la pantalla o necesitandola
 				#9 Entra solo si no hay un proceso que necesite la pantalla (6) a no ser de que tenga mayor prioridad, ni un proceso que bloquee los audifonos (1 y 2)
-				#  Expropia a todos los que esten usando la pantalla
+				#  Expropia a todos los que esten usando la pantalla o necesitandola
 				#10 Entra solo si no hay un proceso que necesite la pantalla (6 y 9) a no ser de que tenga mayor prioridad,
 				#  ni un proceso que bloquee los audifonos (1 y 2) No expropia
 				entra = True
 				verificarAudifonos = False
-				if process.getProcessType==9 or process.getProcessType==10: #ver que no esten bloqueados los audifonos
+				if process.getProcessType()==9 or process.getProcessType()==10: #ver que no esten bloqueados los audifonos
 					verificarAudifonos = True
 				for p in self.pararellRunning:
 					if p.needsIO():
 						procesoQueNecesita = p
-					if (verificarAudifonos) and (not len(p.block)==0): #si process es 6 o 9 y hay un proceso 1 o 2 en pararellRunning
+					if (verificarAudifonos) and (not len(p.block)==0): #si process es 9 o 10 y hay un proceso 1 o 2 en pararellRunning
 						entra = False
 				if entra:
-					if process.getProcessType==6 or process.getProcessType==9:
-						#expropia a todos los procesos tipo 5, 8 y 10 (solo si TODOS tienen menor prioridad) de pararellRunning
+					if process.getProcessType()==6 or process.getProcessType()==9:
+						#expropia a todos los procesos tipo 5, 6, 8, 9 y 10 (solo si TODOS tienen menor prioridad) de pararellRunning
 						expropiarCount = 0
 						# hay procesos usando pantalla?
 						if len(self.processIn[IO.PANTALLA])>0:
@@ -93,17 +93,23 @@ class Scheduler:
 							# ver si es mejor que todos
 							if expropiarCount == len(self.processIn[IO.PANTALLA	]):
 								# expropiamos todos los que usan pantalla
-								pass
+								usan = 'variable_que_decide_si_expropiar_a_los_que_usan_la_pantalla_o_a_el_que_la_necesita'
+								self.exchange(process,tarea2, usan)
+						for p in self.pararellRunning: #Caso en el que hay que expropiar un proceso de parallel running que necesita la pantalla
+							if p.getProcessType()==6 or p.getProcessType()==9:
+								if p.priority > process.priority:
+									#expropio a p
+									self.exchange(process,tarea2)
 					else: #es 5,8,10 verificar su prioridad para ver si expropia a 6 o 9
 						if procesoQueNecesita.priority > process.priority:
 							#expropiar a  procesoQueNecesita
-							pass	
+							self.exchange(process, tarea2)	
 					#process entra a pararellRunning
 					self.appendProcess(process)
 				else:
 					#process pasa a waiting
 					self.waiting.append(process)
-				
+								
 	def appendProcess(self,process):#MODIFICADO
 		# pasó todos los malditos filtros, ahora puede correr tranquilamente
 		for io in process.use:
@@ -276,7 +282,7 @@ class Scheduler:
 			line = str(tipo)+str(self.running.getOtros()[0]) + ";" + str(date) + ";" + str(self.running.runningTime) + "\n"
 			f.write(line)
 			
-	def exchange(self,process,tarea2 = None):#MODIFICAR
+	def exchange(self,process,tarea2 = None, usan = None):#MODIFICANDO
 		if tarea2 == None: #Tarea1
 			print 'Expropiacion de '+self.running.toString()+' por '+process.toString();
 			self.running.setTimeLeft(self.runningTime)
@@ -287,32 +293,48 @@ class Scheduler:
 				print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
 			self.addProcess(paux)
 		else:
-			if process.pid==1 or process.pid==2
-				for p in self.pararellRunning
-					if p.use.count(IO.MICROFONO)>0 or p.use.count(IO.AUDIFONO)>0
-						print 'Expropiacion de '+p.toString()+' por '+process.toString();
-			            p.setTimeLeft(self.runningTime)
-			            self.runningTime=0
-						paux = p
-						
-						self.addProcess(paux,tarea2)
-				self.pararellRunning.append(process)
-				if process.cortable == True:
-				print "Para Cortar el proceso ingrese quit:"+str(process.pid)		
-			
-			elif process.pid==6 or process.pid==9
-				for p in self.pararellRunning
-					if p.use.count(IO.PANTALLA)>0 
-						print 'Expropiacion de '+p.toString()+' por '+process.toString();
-			            p.setTimeLeft(self.runningTime)
-			            self.runningTime=0
+			if process.pid==1 or process.pid==2: #BLOQUEA
+				for p in self.pararellRunning:
+					if p.getProcessType() in [3,4,6,9,10]: #NECESITA
+						print 'Expropiacion de '+p.toString()+' por '+process.toString()
+						p.setTimeLeft(self.runningTime)
+						self.runningTime=0
 						paux = p
 						self.addProcess(paux,tarea2)
-				self.pararellRunning.append(process)
+				#self.pararellRunning.append(process) ESTO YA ESTA HECHO EN ADDPROCESS
 				if process.cortable == True:
-				print "Para Cortar el proceso ingrese quit:"+str(process.pid)
+					print "Para Cortar el proceso ingrese quit:"+str(process.pid)		
+			elif process.pid==6 or process.pid==9: #EXPROPIA AL QUE USA O NECESITA
+				if not usan == None:
+					for p in self.pararellRunning:
+						if p.getProcessType in [5,8,10]: #USA
+							print 'Expropiacion de '+p.toString()+' por '+process.toString()
+							p.setTimeLeft(self.runningTime)
+							self.runningTime=0
+							paux = p
+							self.addProcess(paux,tarea2)
+					#self.pararellRunning.append(process)
+				else:
+					for p in self.pararellRunning:
+						if p.getProcessType in [6,9]:#NECESITA
+							print 'Expropiacion de '+p.toString()+' por '+process.toString()
+							p.setTimeLeft(self.runningTime)
+							self.runningTime=0
+							paux = p
+							self.addProcess(paux,tarea2)
+				if process.cortable == True:
+					print "Para Cortar el proceso ingrese quit:"+str(process.pid)
+			elif process.getProcessType() in [5,8,10]: #EXPROPIA A EL QUE NECESITA 
+				for p in self.pararellRunning:
+					if p.getProcessType in [6,9]: #NECESITA
+						print 'Expropiacion de '+p.toString()+' por '+process.toString()
+						p.setTimeLeft(self.runningTime)
+						self.runningTime=0
+						paux = p
+						self.addProcess(paux,tarea2)
+				if process.cortable == True:
+					print "Para Cortar el proceso ingrese quit:"+str(process.pid)
 			
-		
 	def endProcess(self, process = None): #MODIFICAR 
 		if process == None: #Tarea1
 			print 'Finalizando '+self.running.toString()
