@@ -23,7 +23,7 @@ class Scheduler:
 		"""self.processIn = []
 		for io in range(0,5):
 			self.processIn[io] = list()"""
-		processInPantalla = []
+		self.processInPantalla = []
 			
 		# Necesitamos una lista de procesos corriendo en paralelo
 		self.pararellRunning = list()
@@ -75,6 +75,7 @@ class Scheduler:
 				#  ni un proceso que bloquee los audifonos (1 y 2) No expropia
 				entra = True
 				verificarAudifonos = False
+				procesoQueNecesita=None
 				if process.getProcessType()==9 or process.getProcessType()==10: #ver que no esten bloqueados los audifonos
 					verificarAudifonos = True
 				for p in self.pararellRunning:
@@ -103,9 +104,10 @@ class Scheduler:
 									#expropio a p
 									self.exchange(process)
 					else: #es 5,8,10 verificar su prioridad para ver si expropia a 6 o 9
-						if procesoQueNecesita.priority > process.priority:
-							#expropiar a  procesoQueNecesita
-							self.exchange(process)	
+						if not procesoQueNecesita == None:
+							if procesoQueNecesita.priority > process.priority:
+								#expropiar a  procesoQueNecesita
+								self.exchange(process)	
 					#process entra a pararellRunning
 					self.appendProcess(process)
 				else:
@@ -281,11 +283,11 @@ class Scheduler:
 		else: #registerCalls para tarea 2
 			f=open("Historial.txt", "a")
 			date = datetime.datetime.now()
-			if self.running.getProcessType()==1:
+			if p.getProcessType()==1:
 				tipo = ">;"
 			else:
 				tipo = "<;"
-			line = str(tipo)+str(self.running.getOtros()[0]) + ";" + str(date) + ";" + str(self.running.runningTime) + "\n"
+			line = str(tipo)+str(p.getOtros()[0]) + ";" + str(date) + ";" + str(p.runningTime) + "\n"
 			f.write(line)
 			
 	def exchange(self,process, usan = None):#MODIFICADO
