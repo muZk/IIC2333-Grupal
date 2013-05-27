@@ -195,11 +195,22 @@ class Scheduler:
 				#Aumentar contador de segundos
 				self.clock()
 			else: #ejecutar Tarea 2
+<<<<<<< HEAD
 				#Revisar si llega alguien en el tiempo time y meterlo a waiting o pararellRunning
 				self.checkIncomingProc(self.time) 
 				#Si se acabo algun proceso hacer cambios
 				self.checkIfFinished()
 				#Hacer cambios si existe un proceso en waiting que pueda entrar
+=======
+				#print "checkIncomingProc"
+				#Revisar si llega alguien en el tiempo time y meterlo a waiting o pararellRunning
+				self.checkIncomingProc(self.time) 
+				#Si se acabo algun proceso hacer cambios
+				#print "checkIfFinished"
+				self.checkIfFinished()
+				#Hacer cambios si existe un proceso en waiting que pueda entrar
+				#print "checkPriorities"
+>>>>>>> 729360401af27284cd99f2eb51c236533283ef0e
 				self.checkPriorities() #IMPLEMENTAR, OJO QUE YA NO HAY READY, SINO QUE WAITING
 				#Aumentar contador de segundos
 				self.clock()
@@ -222,7 +233,7 @@ class Scheduler:
 						self.endProcess(running)#Implementar
 
 	def registerLog(self, p=None):#MODIFICADO
-		if p == None: #registerLog para Tarea1
+		if self.tarea2 == False: #registerLog para Tarea1
 			if self.running.getProcessType()==1 or self.running.getProcessType()==2:#si es llamar o recibir llamada registrar en historial
 				self.registerCalls()
 			elif self.running.getProcessType()==3 or self.running.getProcessType()==4:#si es envio  o recibo de mensajes registrar en mensajes
@@ -239,7 +250,7 @@ class Scheduler:
 				
 	def addContact(self, p = None):#MODIFICADO
 		#guardo contactos formato Nombre;Numero
-		if p == None: #addContact para Tarea1
+		if self.tarea2 == False: #addContact para Tarea1
 			f=open("Contactos.txt", "a")
 			line=str(self.running.getOtros()[0])+";"+str(self.running.getOtros()[1])
 			f.write(line)
@@ -250,7 +261,7 @@ class Scheduler:
 				
 	def registerSMS(self, p = None):#MODIFICADO
 		#guardo SMS formato >(si es enviado)<(si es recibido);Numero;Fecha;Texto
-		if p == None: #registerSMS Tarea1
+		if self.tarea2 == False: #registerSMS Tarea1
 			f=open("Mensajes.txt", "a")
 			date = datetime.datetime.now()
 			if self.running.getProcessType()==3:
@@ -271,7 +282,7 @@ class Scheduler:
 
 	def registerCalls(self, p = None):#MODIFICADO
 		#guardo llamadas formato >(si es enviada)<(si es recibida);Numero;Fecha;Duracion
-		if p == None: #registerCalls para Tarea1
+		if self.tarea2 == False: #registerCalls para Tarea1
 			f=open("Historial.txt", "a")
 			date = datetime.datetime.now()
 			if self.running.getProcessType()==1:
@@ -481,4 +492,9 @@ class Scheduler:
 				for running in self.pararellRunning:
 					self.runningTime = self.runningTime + 1	
 					running.runningTime = running.runningTime+1				
+<<<<<<< HEAD
 			time.sleep(1)
+=======
+			time.sleep(1)
+			#print "clock"
+>>>>>>> 729360401af27284cd99f2eb51c236533283ef0e
