@@ -17,6 +17,5 @@ if __name__ == '__main__':
     #Tarea1
     #so.priorityScheduler() # Comenzamos el Loop
     
-    #Tarea2
     so.priorityScheduler()
     

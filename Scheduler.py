@@ -193,11 +193,14 @@ class Scheduler:
 				#Aumentar contador de segundos
 				self.clock()
 			else: #ejecutar Tarea 2
+				print "checkIncomingProc"
 				#Revisar si llega alguien en el tiempo time y meterlo a waiting o pararellRunning
 				self.checkIncomingProc(self.time) 
 				#Si se acabo algun proceso hacer cambios
+				print "checkIfFinished"
 				self.checkIfFinished()
 				#Hacer cambios si existe un proceso en waiting que pueda entrar
+				print "checkPriorities"
 				self.checkPriorities() #IMPLEMENTAR, OJO QUE YA NO HAY READY, SINO QUE WAITING
 				#Aumentar contador de segundos
 				self.clock()
@@ -211,7 +214,7 @@ class Scheduler:
 					self.registerLog()
 					self.endProcess()
 		else: #tarea2
-			if not self.pararellRunning.empty():
+			if len(self.pararellRunning)>0:
 				for running in self.pararellRunning:
 					real_time_left = running.getTimeLeft() - self.runningTime;
 					#print 'checkIfFinished - pid '+str(self.running.pid)+' prioridad: '+str(self.running.priority)+' timeLeft: ' + str(real_time_left)
@@ -408,13 +411,26 @@ class Scheduler:
 					
 			
 	def checkIncomingProc(self,t):#MODIFICADO
-		while len(self.incomingProcesses)>0:
-			#print 'checkIncomingProc '+str(self.incomingProcesses[-1].getExecutionDate())
-			if self.incomingProcesses[-1].getExecutionDate()==t:
-				if self.tarea2 == False: #tarea1
-					self.addProcess(self.incomingProcesses.pop())
-				else: #tarea2
-					self.addProcess(self.incomingProcesses.pop())
+
+		if self.tarea2 == True:
+			topop = list()
+
+			for p in self.incomingProcesses:
+				if p.getExecutionDate()==t:
+					topop.append(p)
+
+			for p in topop:
+				self.addProcess(p)
+				self.incomingProcesses.remove(p)
+
+		else:
+			while len(self.incomingProcesses)>0:
+				#print 'checkIncomingProc '+str(self.incomingProcesses[-1].getExecutionDate())
+				if self.incomingProcesses[-1].getExecutionDate()==t:
+					if self.tarea2 == False: #tarea1
+						self.addProcess(self.incomingProcesses.pop())
+					else: #tarea2
+						self.addProcess(self.incomingProcesses.pop())
 					
 	def showActiveProcess(self): #MODIFICADO
 		if self.tarea2 == False: #tarea1
@@ -440,7 +456,7 @@ class Scheduler:
 			print "------------------------------"
 			
 			if len(self.pararellRunning)>0 :
-				print "Procesos corriendo:"
+				print "Procesos corriendo: (tiempo = "+str(self.time)
 				for p in self.pararellRunning:
 					print "pid = "+str(p.pid) + " name = "+str(p.name)
 			
@@ -462,8 +478,9 @@ class Scheduler:
 			time.sleep(1)
 		else: #tarea2
 			self.time = self.time + 1
-			if not self.pararellRunning.empty():
+			if len(self.pararellRunning)>0:
 				for running in self.pararellRunning:
 					self.runningTime = self.runningTime + 1	
 					running.runningTime = running.runningTime+1				
-			time.sleep(1)	
+			time.sleep(1)
+			print "clock"
