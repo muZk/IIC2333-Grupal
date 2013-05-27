@@ -98,11 +98,10 @@ class Scheduler:
 								# expropiamos todos los que usan pantalla
 								usan = 'variable_que_decide_si_expropiar_a_los_que_usan_la_pantalla_o_a_el_que_la_necesita'
 								self.exchange(process,usan)
-						for p in self.pararellRunning: #Caso en el que hay que expropiar un proceso de parallel running que necesita la pantalla
-							if p.getProcessType()==6 or p.getProcessType()==9:
-								if p.priority > process.priority:
-									#expropio a p
-									self.exchange(process)
+						if not procesoQueNecesita == None:
+							if p.priority > process.priority:
+								#expropio a p
+								self.exchange(process)
 					else: #es 5,8,10 verificar su prioridad para ver si expropia a 6 o 9
 						if not procesoQueNecesita == None:
 							if procesoQueNecesita.priority > process.priority:
@@ -237,7 +236,7 @@ class Scheduler:
 				self.registerCalls(p)
 			elif p.getProcessType()==3 or p.getProcessType()==4:#si es envio  o recibo de mensajes registrar en mensajes
 				self.registerSMS(p)
-			elif p.getProcessType()==5 or p.getProcessType()==7: #agregar contactos registrar en agenda
+			elif p.getProcessType()==5: #agregar contactos registrar en agenda
 				self.addContact(p)
 				
 	def addContact(self, p = None):#MODIFICADO
