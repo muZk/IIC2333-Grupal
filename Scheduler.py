@@ -16,8 +16,8 @@ class Scheduler:
 		self.incomingProcesses = list()
 		self.time=0 #variable que registra el tiempo
 		self.ejecutandose=True
-		self.quantum = 1
-			
+		self.quantum=1
+		self.tarea2=True
 		#FINALEMNTE SOLO SE USO PROCESSIN[IO:PANTALLA] Y DADO QUE HABIAN ERRORES HICE SOLO UNA LISTA PARA LOS QUE USAN PANTALLA	
 		# Cada IO tendra una lista de procesos que lo usan	
 		"""self.processIn = []
@@ -30,12 +30,12 @@ class Scheduler:
 		
 		#Y otra para los que estan en waiting
 		self.waiting = list()
-		
+
 	def getCurrentTime(self):
 		return self.time
 
-	def addProcess(self, process ,tarea2 = None): #FALTA IMPLEMENTAR EXPROPIACIONES (Los if que aun tienen PASS)
-		if tarea2==None:#tarea1
+	def addProcess(self, process): #FALTA IMPLEMENTAR EXPROPIACIONES (Los if que aun tienen PASS)
+		if self.tarea2==False:#tarea1
 			self.ready.put((process.priority,process.pid))
 			print 'Agregando ... {}'.format(process.toString())
 			# Agregamos el proceso en memoria:
@@ -55,7 +55,7 @@ class Scheduler:
 				if entra:
 					if not len(process.block)==0: #si es 1 o 2			
 						#se expropia a todos los procesos tipo 3,4,6,9 y 10 de pararellRunning
-						self.exchange(process,tarea2)
+						self.exchange(process)
 					#process entra a pararellRunning
 					self.appendProcess(process)
 				else: 
@@ -96,16 +96,16 @@ class Scheduler:
 							if expropiarCount == len(self.processInPantalla):
 								# expropiamos todos los que usan pantalla
 								usan = 'variable_que_decide_si_expropiar_a_los_que_usan_la_pantalla_o_a_el_que_la_necesita'
-								self.exchange(process,tarea2, usan)
+								self.exchange(process,usan)
 						for p in self.pararellRunning: #Caso en el que hay que expropiar un proceso de parallel running que necesita la pantalla
 							if p.getProcessType()==6 or p.getProcessType()==9:
 								if p.priority > process.priority:
 									#expropio a p
-									self.exchange(process,tarea2)
+									self.exchange(process)
 					else: #es 5,8,10 verificar su prioridad para ver si expropia a 6 o 9
 						if procesoQueNecesita.priority > process.priority:
 							#expropiar a  procesoQueNecesita
-							self.exchange(process, tarea2)	
+							self.exchange(process)	
 					#process entra a pararellRunning
 					self.appendProcess(process)
 				else:
@@ -126,8 +126,8 @@ class Scheduler:
 		# guardamos en memoria... aunque como lo tamos haciendo ya no es necesario
 		Memory.saveProcess(process)
 		
-	def removeProcess(self,process,tarea2 = None): #MODIFICADO
-		if tarea2 == None:
+	def removeProcess(self,process): #MODIFICADO
+		if self.tarea2 == False:
 			# Removemos un proceso
 			Memory.removeProcess(process.pid)
 			if self.running == process:
@@ -142,7 +142,7 @@ class Scheduler:
 			if process in self.processInPantalla:
 				self.processInPantalla.remove(process)
 				
-	def loadProcessFromString(self,line,cor=True, tarea2 = None): #MODIFICADO
+	def loadProcessFromString(self,line,cor=True): #MODIFICADO
 		atr = line.split(';')
 		otros = list()
 		for i in range(4, len(atr)):
@@ -153,10 +153,10 @@ class Scheduler:
 		else:
 			cortar = False
 		p = Process.Process(self.IdCounter,atr[0],atr[1],atr[2],atr[3],otros,cortar) 
-		if tarea2==None: #tarea1
+		if self.tarea2==False: #tarea1
 			self.addProcess(p)
 		else:#tarea2
-			self.addProcess(p, tarea2)
+			self.addProcess(p)
 		#self.incomingProcesses.append(p)
 		self.IdCounter=self.IdCounter+1
 		#self.incomingProcesses.sort(key = lambda Process: -Process.execution_date) #ordeno por orden de llegada
@@ -181,9 +181,9 @@ class Scheduler:
 	def readProcessFromMemory(self,pid):
 		return Memory.readProcess(pid)
 
-	def priorityScheduler(self, tarea2 = None): #MODIFICADO #Tarea 2 solo tendra un valor si se esta ejecutando la tarea 2 (ver Main)
+	def priorityScheduler(self): #MODIFICADO #Tarea 2 solo tendra un valor si se esta ejecutando la tarea 2 (ver Main)
 		while self.ejecutandose:
-			if tarea2 == None : #ejecutar tarea1
+			if self.tarea2 == False : #ejecutar tarea1
 				#Revisar si llega alguien en el tiempo time y meterlo a la cola de prioridades
 				self.checkIncomingProc(self.time) 
 				#Si se acabo el proceso actual hacer cambios
@@ -194,16 +194,16 @@ class Scheduler:
 				self.clock()
 			else: #ejecutar Tarea 2
 				#Revisar si llega alguien en el tiempo time y meterlo a waiting o pararellRunning
-				self.checkIncomingProc(self.time, tarea2) 
+				self.checkIncomingProc(self.time) 
 				#Si se acabo algun proceso hacer cambios
-				self.checkIfFinished(tarea2)
+				self.checkIfFinished()
 				#Hacer cambios si existe un proceso en waiting que pueda entrar
-				self.checkPriorities(tarea2) #IMPLEMENTAR, OJO QUE YA NO HAY READY, SINO QUE WAITING
+				self.checkPriorities() #IMPLEMENTAR, OJO QUE YA NO HAY READY, SINO QUE WAITING
 				#Aumentar contador de segundos
-				self.clock(tarea2)
+				self.clock()
 				
-	def checkIfFinished(self, tarea2 = None):#MODIFICADO
-		if tarea2 == None: #tarea1
+	def checkIfFinished(self):#MODIFICADO
+		if self.tarea2 == False: #tarea1
 			if self.running is not None:
 				real_time_left = self.running.getTimeLeft() - self.runningTime;
 				#print 'checkIfFinished - pid '+str(self.running.pid)+' prioridad: '+str(self.running.priority)+' timeLeft: ' + str(real_time_left)
@@ -288,8 +288,8 @@ class Scheduler:
 			line = str(tipo)+str(self.running.getOtros()[0]) + ";" + str(date) + ";" + str(self.running.runningTime) + "\n"
 			f.write(line)
 			
-	def exchange(self,process,tarea2 = None, usan = None):#MODIFICADO
-		if tarea2 == None: #Tarea1
+	def exchange(self,process, usan = None):#MODIFICADO
+		if self.tarea2 == False: #Tarea1
 			print 'Expropiacion de '+self.running.toString()+' por '+process.toString();
 			self.running.setTimeLeft(self.runningTime)
 			self.runningTime=0
@@ -306,7 +306,7 @@ class Scheduler:
 						p.setTimeLeft(self.runningTime)
 						self.runningTime=0
 						paux = p
-						self.addProcess(paux,tarea2)
+						self.addProcess(paux)
 				#self.pararellRunning.append(process) ESTO YA ESTA HECHO EN ADDPROCESS	
 			elif process.pid==6 or process.pid==9: #EXPROPIA AL QUE USA O NECESITA
 				if not usan == None:
@@ -316,7 +316,7 @@ class Scheduler:
 							p.setTimeLeft(self.runningTime)
 							self.runningTime=0
 							paux = p
-							self.addProcess(paux,tarea2)
+							self.addProcess(paux)
 					#self.pararellRunning.append(process)
 				else:
 					for p in self.pararellRunning:
@@ -325,7 +325,7 @@ class Scheduler:
 							p.setTimeLeft(self.runningTime)
 							self.runningTime=0
 							paux = p
-							self.addProcess(paux,tarea2)
+							self.addProcess(paux)
 			elif process.getProcessType() in [5,8,10]: #EXPROPIA A EL QUE NECESITA 
 				for p in self.pararellRunning:
 					if p.getProcessType in [6,9]: #NECESITA
@@ -333,7 +333,7 @@ class Scheduler:
 						p.setTimeLeft(self.runningTime)
 						self.runningTime=0
 						paux = p
-						self.addProcess(paux,tarea2)
+						self.addProcess(paux)
 			
 	def endProcess(self, process = None): #MODIFICADO 
 		if process == None: #Tarea1
@@ -360,8 +360,8 @@ class Scheduler:
 				if self.running.cortable == True:
 					print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)"""
 		
-	def endProcessByConsole(self,pid_ask, tarea2=None): #MODIFICADO
-		if tarea2 == None: #tarea1
+	def endProcessByConsole(self,pid_ask): #MODIFICADO
+		if self.tarea2 == False: #tarea1
 			if pid_ask==self.running.pid:
 				self.running.setTimeLeft(self.running.getTimeLeft())
 				#print 'Finalizando proceso '+self.running.toString()
@@ -377,8 +377,8 @@ class Scheduler:
 			else:
 				print "Su proceso está en Waiting o ya fue ejecutado"
 
-	def checkPriorities(self, tarea2 = None):#MODIFICADO
-			if tarea2 == None: #tarea1
+	def checkPriorities(self):#MODIFICADO
+			if self.tarea2 == False: #tarea1
 				#ver si existe un proceso con mayor prioridad que running y si es necesario hacer los cambios
 				if self.running is not None:#si se esta corriendo un proceso
 					if not self.ready.empty():
@@ -403,21 +403,21 @@ class Scheduler:
 				k=len(self.waiting)
 				while i<k:
 					aux= self.waiting.pop(0)
-					self.addProcess(aux,tarea2)
+					self.addProcess(aux)
 					i=i+1
 					
 			
-	def checkIncomingProc(self,t,tarea2 = None):#MODIFICADO
+	def checkIncomingProc(self,t):#MODIFICADO
 		while len(self.incomingProcesses)>0:
 			#print 'checkIncomingProc '+str(self.incomingProcesses[-1].getExecutionDate())
 			if self.incomingProcesses[-1].getExecutionDate()==t:
-				if tarea2 == None: #tarea1
+				if self.tarea2 == False: #tarea1
 					self.addProcess(self.incomingProcesses.pop())
 				else: #tarea2
-					self.addProcess(self.incomingProcesses.pop(), tarea2)
+					self.addProcess(self.incomingProcesses.pop())
 					
-	def showActiveProcess(self, tarea2 = None): #MODIFICADO
-		if tarea2 == None: #tarea1
+	def showActiveProcess(self): #MODIFICADO
+		if self.tarea2 == False: #tarea1
 			# running
 			print "------------------------------"
 			if self.running is not None:
@@ -453,8 +453,8 @@ class Scheduler:
 					print "pid = "+str(p.pid) + " name = "+str(p.name)
 
 		
-	def clock(self, tarea2 = None):#MODIFICADO
-		if tarea2 == None: #tarea1
+	def clock(self):#MODIFICADO
+		if self.tarea2 == False: #tarea1
 			self.time = self.time + 1
 			if self.running is not None:
 				self.runningTime = self.runningTime + 1	
