@@ -193,14 +193,11 @@ class Scheduler:
 				#Aumentar contador de segundos
 				self.clock()
 			else: #ejecutar Tarea 2
-				print "checkIncomingProc"
 				#Revisar si llega alguien en el tiempo time y meterlo a waiting o pararellRunning
 				self.checkIncomingProc(self.time) 
 				#Si se acabo algun proceso hacer cambios
-				print "checkIfFinished"
 				self.checkIfFinished()
 				#Hacer cambios si existe un proceso en waiting que pueda entrar
-				print "checkPriorities"
 				self.checkPriorities() #IMPLEMENTAR, OJO QUE YA NO HAY READY, SINO QUE WAITING
 				#Aumentar contador de segundos
 				self.clock()
@@ -483,4 +480,3 @@ class Scheduler:
 					self.runningTime = self.runningTime + 1	
 					running.runningTime = running.runningTime+1				
 			time.sleep(1)
-			print "clock"
