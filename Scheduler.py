@@ -311,6 +311,7 @@ class Scheduler:
 						self.runningTime=0
 						paux = p
 						self.waiting.append(paux)
+						self.pararellRunning.remove(p)
 				#self.pararellRunning.append(process) 
 			elif process.pid==6 or process.pid==9: #EXPROPIA AL QUE USA O NECESITA
 				if not usan == None:
@@ -321,6 +322,7 @@ class Scheduler:
 							self.runningTime=0
 							paux = p
 							self.waiting.append(paux)
+							self.pararellRunning.remove(p)
 					#self.pararellRunning.append(process)
 				else:
 					for p in self.pararellRunning:
@@ -330,6 +332,7 @@ class Scheduler:
 							self.runningTime=0
 							paux = p
 							self.waiting.append(paux)
+							self.pararellRunning.remove(p)
 					#self.pararellRunning.append(process)
 			elif process.getProcessType() in [5,8,10]: #EXPROPIA A EL QUE NECESITA 
 				for p in self.pararellRunning:
@@ -339,6 +342,7 @@ class Scheduler:
 						self.runningTime=0
 						paux = p
 						self.waiting.append(paux)
+						self.pararellRunning.remove(p)
 				#self.pararellRunning.append(process)
 	def endProcess(self, process = None): #MODIFICADO 
 		if process == None: #Tarea1
@@ -458,7 +462,7 @@ class Scheduler:
 			print "------------------------------"
 			
 			if len(self.pararellRunning)>0 :
-				print "Procesos corriendo: (tiempo = "+str(self.time)
+				print "Procesos corriendo: (tiempo = "+str(self.time)+')'
 				for p in self.pararellRunning:
 					print "pid = "+str(p.pid) + " name = "+str(p.name)
 			
