@@ -18,10 +18,12 @@ class Scheduler:
 		self.ejecutandose=True
 		self.quantum = 1
 			
+		#FINALEMNTE SOLO SE USO PROCESSIN[IO:PANTALLA] Y DADO QUE HABIAN ERRORES HICE SOLO UNA LISTA PARA LOS QUE USAN PANTALLA	
 		# Cada IO tendra una lista de procesos que lo usan	
-		self.processIn = list()
-		for io in range(0,6):
-			self.processIn[io] = list()
+		"""self.processIn = []
+		for io in range(0,5):
+			self.processIn[io] = list()"""
+		processInPantalla = []
 			
 		# Necesitamos una lista de procesos corriendo en paralelo
 		self.pararellRunning = list()
@@ -85,13 +87,13 @@ class Scheduler:
 						#expropia a todos los procesos tipo 5, 6, 8, 9 y 10 (solo si TODOS tienen menor prioridad) de pararellRunning
 						expropiarCount = 0
 						# hay procesos usando pantalla?
-						if len(self.processIn[IO.PANTALLA])>0:
+						if len(self.processInPantalla)>0:
 							# verificar que tenga mejor prioridad que los que estan usando pantalla (o el que este necesitandola)
-							for p in self.processIn[IO.PANTALLA]:
+							for p in self.processInPantalla:
 								if p.priority > process.priority:
 									expropiarCount += 1
 							# ver si es mejor que todos
-							if expropiarCount == len(self.processIn[IO.PANTALLA	]):
+							if expropiarCount == len(self.processInPantalla):
 								# expropiamos todos los que usan pantalla
 								usan = 'variable_que_decide_si_expropiar_a_los_que_usan_la_pantalla_o_a_el_que_la_necesita'
 								self.exchange(process,tarea2, usan)
@@ -112,8 +114,10 @@ class Scheduler:
 								
 	def appendProcess(self,process):#MODIFICADO
 		# pasó todos los malditos filtros, ahora puede correr tranquilamente
-		for io in process.use:
-			self.processIn[io].append(process)
+		"""for io in process.use:
+			self.processIn[io].append(process)"""
+		if 'IO.PANTALLA' in process.use:
+			self.processInPantalla.append(process)
 		# agregamos a la running
 		print 'Agregando ... {}'.format(process.toString())
 		self.pararellRunning.append(process)
@@ -134,9 +138,9 @@ class Scheduler:
 			# remover de pararellRunning
 			self.pararellRunning.remove(process)
 			# remover de cada IO
-			for io in range(0,6):
-				if process in self.processIn[io]:
-					self.processIn[io].remove(process)
+			#for io in range(0,6):
+			if process in self.processInPantalla:
+				self.processInPantalla.remove(process)
 				
 	def loadProcessFromString(self,line,cor=True, tarea2 = None): #MODIFICADO
 		atr = line.split(';')
