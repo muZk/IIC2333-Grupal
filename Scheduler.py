@@ -78,11 +78,12 @@ class Scheduler:
 				procesoQueNecesita=None
 				if process.getProcessType()==9 or process.getProcessType()==10: #ver que no esten bloqueados los audifonos
 					verificarAudifonos = True
-				for p in self.pararellRunning:
-					if p.needsIO():
-						procesoQueNecesita = p
-					if (verificarAudifonos) and (not len(p.block)==0): #si process es 9 o 10 y hay un proceso 1 o 2 en pararellRunning
-						entra = False
+				if len(self.pararellRunning)>0:
+					for p in self.pararellRunning:
+						if p.needsIO():
+							procesoQueNecesita = p
+						if (verificarAudifonos) and (not len(p.block)==0): #si process es 9 o 10 y hay un proceso 1 o 2 en pararellRunning
+							entra = False
 				if entra:
 					if process.getProcessType()==6 or process.getProcessType()==9:
 						#expropia a todos los procesos tipo 5, 6, 8, 9 y 10 (solo si TODOS tienen menor prioridad) de pararellRunning
@@ -100,8 +101,14 @@ class Scheduler:
 								self.exchange(process,usan)
 							else:
 								# no es mejor que todos, chao!
-								self.waiting.append(process)
+								# un parche horrible...
+								if len(self.processInPantalla) == 1 and len(self.pararellRunning) == 0:
+									self.appendProcess(process)
+								else:	
+									self.waiting.append(process)
 								return
+						else:
+							print 'no hay weones en pantalla'
 						if not procesoQueNecesita == None:
 							if p.priority > process.priority:
 								#expropio a p
@@ -411,7 +418,8 @@ class Scheduler:
 					print 'Ejecutando '+self.running.toString() + ' t = ' + str(self.time)
 					if self.running.cortable == True:
 						print "Para Cortar el proceso ingrese quit:"+str(self.running.pid)
-			else: #TAREA 2		
+			else: #TAREA 2	
+
 				i=0		
 				k=len(self.waiting)
 				while i<k:
@@ -471,7 +479,7 @@ class Scheduler:
 					print "pid = "+str(p.pid) + " name = "+str(p.name)
 			
 			else:
-				print "No hay procesos corriendo"
+				print "No hay procesos corriendo (tiempo = "+str(self.time)+")"
 				
 			if len(self.waiting)>0 :
 				print "Procesos en waiting:"
