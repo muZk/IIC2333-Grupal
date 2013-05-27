@@ -4,7 +4,7 @@ Cristobal Jimenez;2277567
 Cristobal Jimenez;2277567
 Cristobal Jimenez;2277567
 Cristobal Jimenez;2277567
-<<<<<<< HEAD
-=======
 Cristobal Jimenez;2277567
->>>>>>> 729360401af27284cd99f2eb51c236533283ef0e
+Cristobal Jimenez;2277567
+Cristobal Jimenez;2277567
+Cristobal Jimenez;2277567
