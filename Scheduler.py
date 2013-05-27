@@ -98,6 +98,10 @@ class Scheduler:
 								# expropiamos todos los que usan pantalla
 								usan = 'variable_que_decide_si_expropiar_a_los_que_usan_la_pantalla_o_a_el_que_la_necesita'
 								self.exchange(process,usan)
+							else:
+								# no es mejor que todos, chao!
+								self.waiting.append(process)
+								return
 						if not procesoQueNecesita == None:
 							if p.priority > process.priority:
 								#expropio a p
@@ -117,7 +121,7 @@ class Scheduler:
 		# pasó todos los malditos filtros, ahora puede correr tranquilamente
 		"""for io in process.use:
 			self.processIn[io].append(process)"""
-		if 'IO.PANTALLA' in process.use:
+		if IO.PANTALLA in process.use or process.needsIO():
 			self.processInPantalla.append(process)
 		# agregamos a la running
 		print 'Agregando ... {}'.format(process.toString())
@@ -194,13 +198,6 @@ class Scheduler:
 				#Aumentar contador de segundos
 				self.clock()
 			else: #ejecutar Tarea 2
-<<<<<<< HEAD
-				#Revisar si llega alguien en el tiempo time y meterlo a waiting o pararellRunning
-				self.checkIncomingProc(self.time) 
-				#Si se acabo algun proceso hacer cambios
-				self.checkIfFinished()
-				#Hacer cambios si existe un proceso en waiting que pueda entrar
-=======
 				#print "checkIncomingProc"
 				#Revisar si llega alguien en el tiempo time y meterlo a waiting o pararellRunning
 				self.checkIncomingProc(self.time) 
@@ -209,7 +206,6 @@ class Scheduler:
 				self.checkIfFinished()
 				#Hacer cambios si existe un proceso en waiting que pueda entrar
 				#print "checkPriorities"
->>>>>>> 729360401af27284cd99f2eb51c236533283ef0e
 				self.checkPriorities() #IMPLEMENTAR, OJO QUE YA NO HAY READY, SINO QUE WAITING
 				#Aumentar contador de segundos
 				self.clock()
@@ -492,9 +488,5 @@ class Scheduler:
 				for running in self.pararellRunning:
 					self.runningTime = self.runningTime + 1	
 					running.runningTime = running.runningTime+1				
-<<<<<<< HEAD
-			time.sleep(1)
-=======
 			time.sleep(1)
 			#print "clock"
->>>>>>> 729360401af27284cd99f2eb51c236533283ef0e
